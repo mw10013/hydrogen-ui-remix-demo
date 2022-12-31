@@ -4,8 +4,8 @@ import { useLoaderData } from "@remix-run/react";
 import { graphql } from "~/gql/gql";
 import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
+import { Image } from "@shopify/hydrogen-react";
 // import type {IndexQueryQuery} from '../gql/graphql';
-
 
 export const loader = (async () => {
   const data = await request({
@@ -25,10 +25,15 @@ export default function Index() {
 
   // const { session } = useOutletContext<ContextType>();
   return (
-    <div className="mt-8 ml-8">
-      <div className=" font-bold text-lg">Hydrogen UI Sandbox</div>
+    <main className="mt-8 ml-8">
+      <h1 className="font-bold text-lg">Welcome to {data.shop?.name}</h1>
+      <Image
+        data={data.products.nodes[0].variants.nodes[0].image ?? {}}
+        width={500}
+        loading="eager"
+      />
       <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
+    </main>
   );
 }
 
