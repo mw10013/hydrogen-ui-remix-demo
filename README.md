@@ -36,6 +36,7 @@
 - pnpm add -D dotenv
 - pnpm add -D @faker-js/faker
 - pnpm add @shopify/hydrogen-react
+- pnpm add graphql @graphql-typed-document-node/core
 - pnpm add graphql-request
 - pnpm add -D @graphql-codegen/cli @graphql-codegen/client-preset
 

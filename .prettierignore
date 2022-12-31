@@ -12,5 +12,4 @@ node_modules
 
 /app/styles/tailwind.css
 
-/cypress/screenshots
-/cypress/videos
+/app/gql/**

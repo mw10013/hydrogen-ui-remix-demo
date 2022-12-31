@@ -4,8 +4,33 @@ import { useLoaderData } from "@remix-run/react";
 import { graphql } from "~/gql/gql";
 import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
-import type {IndexQueryQuery} from '../gql/graphql';
+// import type {IndexQueryQuery} from '../gql/graphql';
 
+
+export const loader = (async () => {
+  const data = await request({
+    url: shopClient.getStorefrontApiUrl(),
+    document: query,
+    // @TODO: convert to 'getPrivateTokenHeaders({buyerIp})'
+    requestHeaders: shopClient.getPublicTokenHeaders(),
+  });
+
+  return json({
+    data,
+  });
+}) satisfies LoaderFunction;
+
+export default function Index() {
+  const { data } = useLoaderData<typeof loader>();
+
+  // const { session } = useOutletContext<ContextType>();
+  return (
+    <div className="mt-8 ml-8">
+      <div className=" font-bold text-lg">Hydrogen UI Sandbox</div>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  );
+}
 
 const query = graphql(`
   query IndexQuery {
@@ -35,28 +60,3 @@ const query = graphql(`
     }
   }
 `);
-
-export const loader = (async () => {
-  const data = await request({
-    url: shopClient.getStorefrontApiUrl(),
-    document: query,
-    // @TODO: convert to 'getPrivateTokenHeaders({buyerIp})'
-    requestHeaders: shopClient.getPublicTokenHeaders(),
-  });
-
-  return json({
-    data,
-  });
-}) satisfies LoaderFunction;
-
-export default function Index() {
-  const { data } = useLoaderData<typeof loader>();
-
-  // const { session } = useOutletContext<ContextType>();
-  return (
-    <div className="mt-8 ml-8">
-      <div className=" font-bold text-lg">Hydrogen UI Sandbox</div>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
-  );
-}

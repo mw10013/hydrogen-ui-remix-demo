@@ -9,6 +9,7 @@
     "dev:css": "pnpm generate:css --watch",
     "dev:remix": "remix dev",
     "generate:css": "tailwindcss -o ./app/styles/tailwind.css",
+    "codegen": "graphql-codegen --config graphql-codegen.config.ts",
     "test": "vitest",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
@@ -21,6 +22,7 @@
     "/public/build"
   ],
   "dependencies": {
+    "@graphql-typed-document-node/core": "^3.1.1",
     "@headlessui/react": "1.7.4",
     "@heroicons/react": "2.0.13",
     "@remix-run/node": "^1.9.0",
@@ -29,6 +31,7 @@
     "@shopify/hydrogen-react": "^2022.10.6",
     "@vercel/node": "^2.6.4",
     "clsx": "1.2.1",
+    "graphql": "^16.6.0",
     "graphql-request": "^5.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
