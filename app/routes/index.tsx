@@ -4,6 +4,8 @@ import { useLoaderData } from "@remix-run/react";
 import { graphql } from "~/gql/gql";
 import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
+import type {IndexQueryQuery} from '../gql/graphql';
+
 
 const query = graphql(`
   query IndexQuery {
