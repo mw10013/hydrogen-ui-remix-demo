@@ -57,7 +57,7 @@ export type Scalars = {
    * }`
    *
    */
-  JSON: any;
+  JSON: unknown;
   /**
    * Represents an [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) and
    * [RFC 3987](https://datatracker.ietf.org/doc/html/rfc3987)-compliant URI string.

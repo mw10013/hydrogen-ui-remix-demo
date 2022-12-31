@@ -12,8 +12,10 @@ const config: CodegenConfig = {
       plugins: [],
       config: {
         // https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#config-api-reference
+        defaultScalarType: "unknown",
         enumsAsTypes: true,
         useTypeImports: true,
+        useImplementingTypes: true,
         // scalars: storefrontApiCustomScalars,
         scalars: {
           // Because of the limitations outlined above, these need to be kept in sync with the original definitions in the @shopify/hydrogen-react repo!
