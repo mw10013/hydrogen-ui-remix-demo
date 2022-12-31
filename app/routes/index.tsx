@@ -1,7 +1,7 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { graphql } from "~/gql/gql";
+import { graphql } from "~/lib/gql/gql";
 import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
 import { Image } from "@shopify/hydrogen-react";
