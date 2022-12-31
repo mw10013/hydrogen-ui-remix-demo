@@ -1,46 +1,18 @@
-## Notes
-
-- hack: ci uses .env.example
-- ignoring playwright configuration error: HTML reporter output folder clashes with the tests output folder
 
 ## Dev Setup
 
 - .eslintrc.js: prettier
 - package.json: prettier, eslintIgnore
-- pnpm add -D prettier prettier-plugin-tailwindcss eslint-config-prettier
 - .gitignore: tailwind
-- pnpm add -D @types/node
-- pnpm add -D tailwindcss
 - pnpm exec tailwindcss init
-- tailwind.congif.js
+- tailwind.config.js
 - root.tsx: import tailwindStylesheetUrl from "./styles/tailwind.css";
-- pnpm add -D npm-run-all
-- pnpm add -D @tailwindcss/forms
 - tailwind.config.js plugins: require('@tailwindcss/forms')
-- pnpm add -D @tailwindcss/typography
 - tailwind.config.js plugins: require('@tailwindcss/typography')
-- pnpm add @headlessui/react
-- pnpm add @heroicons/react
-- pnpm add zod
-- pnpm add clsx
-- pnpm add remeda
-- pnpm add tiny-invariant
 - pnpm dlx create-playwright
-- pnpm add -D vitest
-- pnpm add -D @vitejs/plugin-react
-- pnpm add -D jsdom @testing-library/react
-- pnpm add -D @testing-library/jest-dom
-- pnpm add -D @types/testing-library\_\_jest-dom
-- pnpm add -D @testing-library/user-event ???
-- pnpm add -D react-router
-- pnpm add -D dotenv
-- pnpm add -D @faker-js/faker
-- pnpm add @shopify/hydrogen-react
-- pnpm add graphql @graphql-typed-document-node/core
-- pnpm add graphql-request
-- pnpm add -D @graphql-codegen/cli @graphql-codegen/client-preset
-- pnpm add -D eslint-plugin-import eslint-plugin-node
-- pnpm add -D eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-hydrogen 
+- ignoring playwright configuration error: HTML reporter output folder clashes with the tests output folder
+- hack: ci uses .env.example?
+
 
 ## Vitest
 
