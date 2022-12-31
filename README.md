@@ -39,6 +39,8 @@
 - pnpm add graphql @graphql-typed-document-node/core
 - pnpm add graphql-request
 - pnpm add -D @graphql-codegen/cli @graphql-codegen/client-preset
+- pnpm add -D eslint-plugin-import eslint-plugin-node
+- pnpm add -D eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-hydrogen 
 
 ## Vitest
 
