@@ -7,36 +7,6 @@ import { shopClient } from "~/lib/utils";
 import { Image } from "@shopify/hydrogen-react";
 // import type {IndexQueryQuery} from '../gql/graphql';
 
-export const loader = (async () => {
-  const data = await request({
-    url: shopClient.getStorefrontApiUrl(),
-    document: query,
-    // @TODO: convert to 'getPrivateTokenHeaders({buyerIp})'
-    requestHeaders: shopClient.getPublicTokenHeaders(),
-  });
-
-  return json({
-    data,
-  });
-}) satisfies LoaderFunction;
-
-export default function Index() {
-  const { data } = useLoaderData<typeof loader>();
-
-  // const { session } = useOutletContext<ContextType>();
-  return (
-    <main className="mt-8 ml-8">
-      <h1 className="font-bold text-lg">Welcome to {data.shop?.name}</h1>
-      <Image
-        data={data.products.nodes[0].variants.nodes[0].image ?? {}}
-        width={500}
-        loading="eager"
-      />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </main>
-  );
-}
-
 const query = graphql(`
   query IndexQuery {
     shop {
@@ -65,3 +35,32 @@ const query = graphql(`
     }
   }
 `);
+
+export const loader = (async () => {
+  const data = await request({
+    url: shopClient.getStorefrontApiUrl(),
+    document: query,
+    requestHeaders: shopClient.getPublicTokenHeaders(),
+  });
+
+  return json({
+    data,
+  });
+}) satisfies LoaderFunction;
+
+export default function Index() {
+  const { data } = useLoaderData<typeof loader>();
+
+  // const { session } = useOutletContext<ContextType>();
+  return (
+    <main className="mt-8 ml-8">
+      <h1 className="font-bold text-lg">Welcome to {data.shop?.name}</h1>
+      <Image
+        data={data.products.nodes[0].variants.nodes[0].image ?? {}}
+        width={500}
+        loading="eager"
+      />
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </main>
+  );
+}

@@ -6,6 +6,7 @@
 - .gitignore: tailwind
 - pnpm exec tailwindcss init
 - tailwind.config.js
+- styles/tailwind.css
 - root.tsx: import tailwindStylesheetUrl from "./styles/tailwind.css";
 - tailwind.config.js plugins: require('@tailwindcss/forms')
 - tailwind.config.js plugins: require('@tailwindcss/typography')
