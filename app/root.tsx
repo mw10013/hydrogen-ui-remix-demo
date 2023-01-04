@@ -39,6 +39,18 @@ export const MenuItemFragment = graphql(`
   }
 `);
 
+export const MenuFragment = graphql(`
+  fragment Menu on Menu {
+    id
+    items {
+      ...MenuItem
+      items {
+        ...MenuItem
+      }
+    }
+  }
+`);
+
 const query = graphql(`
   query LayoutMenusQuery(
     $headerMenuHandle: String!
@@ -48,22 +60,10 @@ const query = graphql(`
       name
     }
     headerMenu: menu(handle: $headerMenuHandle) {
-      id
-      items {
-        ...MenuItem
-        items {
-          ...MenuItem
-        }
-      }
+      ...MenuFragment
     }
     footerMenu: menu(handle: $footerMenuHandle) {
-      id
-      items {
-        ...MenuItem
-        items {
-          ...MenuItem
-        }
-      }
+      ...MenuFragment
     }
   }
 `);
@@ -79,15 +79,15 @@ export const loader = (async () => {
     requestHeaders: shopClient.getPublicTokenHeaders(),
   });
 
-  const customPrefixes = { BLOG: "", CATALOG: "products" };
+  // const customPrefixes = { BLOG: "", CATALOG: "products" };
 
-  const headerMenu = data?.headerMenu
-    ? parseMenu(data.headerMenu, customPrefixes)
-    : undefined;
+  // const headerMenu = data?.headerMenu
+  //   ? parseMenu(data.headerMenu, customPrefixes)
+  //   : undefined;
 
-  const footerMenu = data?.footerMenu
-    ? parseMenu(data.footerMenu, customPrefixes)
-    : undefined;
+  // const footerMenu = data?.footerMenu
+  //   ? parseMenu(data.footerMenu, customPrefixes)
+  //   : undefined;
 
   return json({
     data,

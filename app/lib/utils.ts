@@ -142,7 +142,7 @@ export interface EnhancedMenu extends Menu {
   and resource type.
   It optionally overwrites url paths based on item.type
 */
-export function parseMenu(menu: Menu, customPrefixes = {}): EnhancedMenu {
+export function parseMenu(menu: Pick<Menu, "items">, customPrefixes = {}) {
   if (!menu?.items) {
     // eslint-disable-next-line no-console
     console.warn('Invalid menu passed to parseMenu');
@@ -151,7 +151,6 @@ export function parseMenu(menu: Menu, customPrefixes = {}): EnhancedMenu {
   }
 
   return {
-    ...menu,
     items: menu.items.map(parseItem(customPrefixes)),
   };
 }
