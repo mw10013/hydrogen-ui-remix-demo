@@ -17,35 +17,48 @@ import {
 import { CartProvider, ShopifyProvider } from "@shopify/hydrogen-react";
 import request from "graphql-request";
 import { useWindowScroll } from "react-use";
+import invariant from "tiny-invariant";
+import type { FragmentType } from "./lib/gql";
+import { getFragmentData } from "./lib/gql";
 import { graphql } from "./lib/gql/gql";
-import type { LayoutMenusQueryQuery } from "./lib/gql/graphql";
-import { parseMenu, shopClient } from "./lib/utils";
+import type {
+  LayoutMenusQueryQuery,
+  MenuFragmentFragment,
+} from "./lib/gql/graphql";
+import { shopClient } from "./lib/utils";
 import tailwindStylesheetUrl from "./styles/tailwind.css";
-import { FragmentType, useFragment } from "./gql/fragment-masking";
 
 export type ContextType = {};
 
 const HEADER_MENU_HANDLE = "main-menu";
 const FOOTER_MENU_HANDLE = "footer";
 
-export const MenuItemFragment = graphql(`
-  fragment MenuItem on MenuItem {
-    id
-    resourceId
-    tags
-    title
-    type
-    url
-  }
-`);
+// export const MenuItemFragment = graphql(`
+//   fragment MenuItemFragment on MenuItem {
+//     id
+//     resourceId
+//     tags
+//     title
+//     type
+//     url
+//   }
+// `);
 
 export const MenuFragment = graphql(`
   fragment MenuFragment on Menu {
     id
     items {
-      ...MenuItem
+      id
+      resourceId
+      title
+      type
+      url
       items {
-        ...MenuItem
+        id
+        resourceId
+        title
+        type
+        url
       }
     }
   }
@@ -79,8 +92,10 @@ export const loader = (async () => {
     requestHeaders: shopClient.getPublicTokenHeaders(),
   });
 
+  invariant(data.headerMenu, "Missing header menu");
   const customPrefixes = { BLOG: "", CATALOG: "products" };
-  parseMenu(data.headerMenu!, customPrefixes);
+  const headerMenu = enhanceMenu(data.headerMenu, customPrefixes);
+  console.log(JSON.stringify(headerMenu, null, 2));
 
   // const headerMenu = data?.headerMenu
   //   ? parseMenu(data.headerMenu, customPrefixes)
@@ -91,6 +106,8 @@ export const loader = (async () => {
   //   : undefined;
 
   return json({
+    headerMenu,
+    shopName: data.shop.name,
     data,
   });
 }) satisfies LoaderFunction;
@@ -112,7 +129,7 @@ export function DesktopHeader({
 }: {
   title: string;
   isHome?: boolean;
-  menu: LayoutMenusQueryQuery["headerMenu"];
+  menu: ReturnType<typeof enhanceMenu>;
 }) {
   const { y } = useWindowScroll();
 
@@ -135,12 +152,10 @@ export function DesktopHeader({
           {title}
         </Link>
         <nav className="flex gap-8">
-          {/* Top level menu items */}
           {(menu?.items || []).map((item, i) => (
-            <pre key={i}>{JSON.stringify(item, null, 2)}</pre>
-            // <Link key={item.id} to={item.to} target={item.target}>
-            //   {item.title}
-            // </Link>
+            <Link key={item.id} to={item.to} target={item.target}>
+              {item.title}
+            </Link>
           ))}
         </nav>
       </div>
@@ -178,7 +193,7 @@ export function DesktopHeader({
 
 export default function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data } = useLoaderData<typeof loader>();
+  const { shopName, headerMenu, data } = useLoaderData<typeof loader>();
   const context: ContextType = {};
 
   return (
@@ -203,7 +218,7 @@ export default function App() {
                   Skip to content
                 </a>
               </div>
-              <DesktopHeader title={data.shop.name} menu={data.headerMenu} />
+              <DesktopHeader title={shopName} menu={headerMenu} />
               <main role="main" id="mainContent" className="flex-grow">
                 <Outlet context={context} />
               </main>
@@ -217,4 +232,128 @@ export default function App() {
       </body>
     </html>
   );
+}
+
+function resolveToFromType(
+  {
+    customPrefixes,
+    pathname,
+    type,
+  }: {
+    customPrefixes: Record<string, string>;
+    pathname?: string;
+    type?: string;
+  } = {
+    customPrefixes: {},
+  }
+) {
+  if (!pathname || !type) return "";
+
+  /*
+    MenuItemType enum
+    @see: https://shopify.dev/api/storefront/unstable/enums/MenuItemType
+  */
+  const defaultPrefixes = {
+    BLOG: "blogs",
+    COLLECTION: "collections",
+    COLLECTIONS: "collections", // Collections All (not documented)
+    FRONTPAGE: "frontpage",
+    HTTP: "",
+    PAGE: "pages",
+    CATALOG: "collections/all", // Products All
+    PRODUCT: "products",
+    SEARCH: "search",
+    SHOP_POLICY: "policies",
+  };
+
+  const pathParts = pathname.split("/");
+  const handle = pathParts.pop() || "";
+  const routePrefix: Record<string, string> = {
+    ...defaultPrefixes,
+    ...customPrefixes,
+  };
+
+  switch (true) {
+    // special cases
+    case type === "FRONTPAGE":
+      return "/";
+
+    case type === "ARTICLE": {
+      const blogHandle = pathParts.pop();
+      return routePrefix.BLOG
+        ? `/${routePrefix.BLOG}/${blogHandle}/${handle}/`
+        : `/${blogHandle}/${handle}/`;
+    }
+
+    case type === "COLLECTIONS":
+      return `/${routePrefix.COLLECTIONS}`;
+
+    case type === "SEARCH":
+      return `/${routePrefix.SEARCH}`;
+
+    case type === "CATALOG":
+      return `/${routePrefix.CATALOG}`;
+
+    // common cases: BLOG, PAGE, COLLECTION, PRODUCT, SHOP_POLICY, HTTP
+    default:
+      return routePrefix[type]
+        ? `/${routePrefix[type]}/${handle}`
+        : `/${handle}`;
+  }
+}
+
+type MenuItem = Omit<MenuFragmentFragment["items"][number], "items"> & {
+  items?: MenuItem[];
+};
+
+type EnhancedMenuItem = Omit<MenuItem, "items"> & {
+  isExternal: boolean;
+  target: string;
+  to: string;
+  items?: EnhancedMenuItem[];
+};
+
+function enhanceMenuItem(customPrefixes = {}) {
+  return function (item: MenuItem): EnhancedMenuItem {
+    // Currently the MenuAPI only returns online store urls e.g — xyz.myshopify.com/..
+    // Note: update logic when API is updated to include the active qualified domain
+    invariant(item.url, "Menu item missing url");
+    const { pathname } = new URL(item.url);
+    const isInternalLink = /\.myshopify\.com/g.test(item.url);
+    const parsedItem = isInternalLink
+      ? {
+          isExternal: false,
+          target: "_self",
+          to: resolveToFromType({ type: item.type, customPrefixes, pathname }),
+        }
+      : {
+          isExternal: true,
+          target: "_blank",
+          to: item.url,
+        };
+
+    return {
+      ...item,
+      ...parsedItem,
+      items: item.items?.map(enhanceMenuItem(customPrefixes)),
+    };
+  };
+}
+
+/*
+  Recursively adds `to` and `target` attributes to links based on their url
+  and resource type.
+  It optionally overwrites url paths based on item.type
+*/
+export function enhanceMenu(
+  menuFragment: FragmentType<typeof MenuFragment>,
+  customPrefixes = {}
+) {
+  const menu = getFragmentData(MenuFragment, menuFragment);
+  invariant(menu.items.length > 0, "Missing menu items");
+
+  return {
+    ...menu,
+    items: menu.items.map(enhanceMenuItem(customPrefixes)),
+  };
 }
