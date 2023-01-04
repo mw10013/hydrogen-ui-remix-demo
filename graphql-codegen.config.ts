@@ -9,6 +9,11 @@ const config: CodegenConfig = {
     "./app/lib/gql/": {
       preset: "client",
       plugins: [],
+      presetConfig: {
+        // https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#the-usefragment-helper
+        fragmentMasking: { unmaskFunctionName: "getFragmentData" },
+        // fragmentMasking: false,
+      },
       config: {
         // https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#config-api-reference
         defaultScalarType: "unknown",
