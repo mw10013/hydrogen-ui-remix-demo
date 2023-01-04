@@ -40,7 +40,7 @@ export const MenuItemFragment = graphql(`
 `);
 
 export const MenuFragment = graphql(`
-  fragment Menu on Menu {
+  fragment MenuFragment on Menu {
     id
     items {
       ...MenuItem
@@ -79,7 +79,8 @@ export const loader = (async () => {
     requestHeaders: shopClient.getPublicTokenHeaders(),
   });
 
-  // const customPrefixes = { BLOG: "", CATALOG: "products" };
+  const customPrefixes = { BLOG: "", CATALOG: "products" };
+  parseMenu(data.headerMenu!, customPrefixes);
 
   // const headerMenu = data?.headerMenu
   //   ? parseMenu(data.headerMenu, customPrefixes)
@@ -114,7 +115,6 @@ export function DesktopHeader({
   menu: LayoutMenusQueryQuery["headerMenu"];
 }) {
   const { y } = useWindowScroll();
-  console.log({ y, title, isHome });
 
   const styles = {
     button:
