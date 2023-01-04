@@ -6790,6 +6790,8 @@ export type WeightUnit =
   /** 1 pound equals 16 ounces. */
   | 'POUNDS';
 
+export type MenuItemFragment = { __typename?: 'MenuItem', id: string, resourceId?: string | null, tags: Array<string>, title: string, type: MenuItemType, url?: string | null } & { ' $fragmentName'?: 'MenuItemFragment' };
+
 export type LayoutMenusQueryQueryVariables = Exact<{
   headerMenuHandle: Scalars['String'];
   footerMenuHandle: Scalars['String'];
@@ -6809,8 +6811,6 @@ export type LayoutMenusQueryQuery = { __typename?: 'QueryRoot', shop: { __typena
       )> }
       & { ' $fragmentRefs'?: { 'MenuItemFragment': MenuItemFragment } }
     )> } | null };
-
-export type MenuItemFragment = { __typename?: 'MenuItem', id: string, resourceId?: string | null, tags: Array<string>, title: string, type: MenuItemType, url?: string | null } & { ' $fragmentName'?: 'MenuItemFragment' };
 
 export type IndexQueryQueryVariables = Exact<{ [key: string]: never; }>;
 

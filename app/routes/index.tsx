@@ -53,7 +53,7 @@ export default function Index() {
 
   // const { session } = useOutletContext<ContextType>();
   return (
-    <main className="mt-8 ml-8">
+    <div className="mt-8 ml-8">
       <h1 className="font-bold text-lg">Welcome to {data.shop?.name}</h1>
       <Image
         data={data.products.nodes[0].variants.nodes[0].image ?? {}}
@@ -61,6 +61,6 @@ export default function Index() {
         loading="eager"
       />
       <pre>{JSON.stringify(data, null, 2)}</pre>
-    </main>
+    </div>
   );
 }
