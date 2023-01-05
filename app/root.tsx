@@ -15,9 +15,11 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { CartProvider, ShopifyProvider } from "@shopify/hydrogen-react";
+import clsx from "clsx";
 import request from "graphql-request";
 import { useWindowScroll } from "react-use";
 import invariant from "tiny-invariant";
+import { IconBag } from "./components/elements/icon";
 import type { FragmentType } from "./lib/gql";
 import { getFragmentData } from "./lib/gql";
 import { graphql } from "./lib/gql/gql";
@@ -95,7 +97,6 @@ export const loader = (async () => {
   invariant(data.headerMenu, "Missing header menu");
   const customPrefixes = { BLOG: "", CATALOG: "products" };
   const headerMenu = enhanceMenu(data.headerMenu, customPrefixes);
-  console.log(JSON.stringify(headerMenu, null, 2));
 
   // const headerMenu = data?.headerMenu
   //   ? parseMenu(data.headerMenu, customPrefixes)
@@ -122,6 +123,26 @@ export const meta: MetaFunction = () => ({
   viewport: "width=device-width,initial-scale=1",
 });
 
+function CartBadge({ dark }: { dark: boolean }) {
+  // const {totalQuantity} = useCart();
+  const totalQuantity = 0;
+
+  if (totalQuantity < 1) {
+    return null;
+  }
+  return (
+    <div
+      className={`${
+        dark
+          ? "text-primary bg-contrast dark:text-contrast dark:bg-primary"
+          : "text-contrast bg-primary"
+      } absolute bottom-1 right-1 text-[0.625rem] font-medium subpixel-antialiased h-3 min-w-[0.75rem] flex items-center justify-center leading-none text-center rounded-full w-auto px-[0.125rem] pb-px`}
+    >
+      <span>{totalQuantity}</span>
+    </div>
+  );
+}
+
 export function DesktopHeader({
   title,
   isHome = true,
@@ -136,17 +157,19 @@ export function DesktopHeader({
   const styles = {
     button:
       "relative flex items-center justify-center w-8 h-8 focus:ring-primary/5",
-    container: `${
-      isHome
-        ? "bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader"
-        : "bg-contrast/80 text-primary"
-    } ${
-      y > 50 && !isHome ? "shadow-lightHeader " : ""
-    }hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`,
   };
 
   return (
-    <header role="banner" className={styles.container}>
+    <header
+      role="banner"
+      className={clsx(
+        isHome
+          ? "bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader"
+          : "bg-contrast/80 text-primary",
+        y > 50 && !isHome && "shadow-lightHeader",
+        "hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8"
+      )}
+    >
       <div className="flex gap-12">
         <Link className="font-bold" to="/">
           {title}
@@ -159,8 +182,8 @@ export function DesktopHeader({
           ))}
         </nav>
       </div>
-      {/* <div className="flex items-center gap-1">
-    <form
+      <div className="flex items-center gap-1">
+        {/* <form
       action={`/${countryCode ? countryCode + '/' : ''}search`}
       className="flex items-center gap-2"
     >
@@ -181,12 +204,13 @@ export function DesktopHeader({
     </form>
     <Link to={'/account'} className={styles.button}>
       <IconAccount />
-    </Link>
-    <button onClick={openCart} className={styles.button}>
-      <IconBag />
-      <CartBadge dark={isHome} />
-    </button>
-  </div> */}
+    </Link> */}
+        {/* <button onClick={openCart} className={styles.button}> */}
+        <button className={styles.button}>
+          <IconBag />
+          <CartBadge dark={isHome} />
+        </button>
+      </div>
     </header>
   );
 }
@@ -222,7 +246,6 @@ export default function App() {
               <main role="main" id="mainContent" className="flex-grow">
                 <Outlet context={context} />
               </main>
-              <pre>{JSON.stringify(data, null, 2)}</pre>
             </div>
           </CartProvider>
         </ShopifyProvider>
