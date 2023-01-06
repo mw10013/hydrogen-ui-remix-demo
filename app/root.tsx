@@ -14,7 +14,6 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useLocation,
 } from "@remix-run/react";
 import { CartProvider, ShopifyProvider } from "@shopify/hydrogen-react";
 import clsx from "clsx";
@@ -23,7 +22,7 @@ import { useWindowScroll } from "react-use";
 import invariant from "tiny-invariant";
 import { Heading } from "./components/elements/heading";
 import { IconBag, IconCaret } from "./components/elements/icon";
-import { Section } from "./components/elements/section";
+import { Footer } from "./components/global/footer";
 import { graphql } from "./lib/gql/gql";
 import type { MenuFragmentFragment } from "./lib/gql/graphql";
 import { shopClient } from "./lib/utils";
@@ -209,7 +208,7 @@ export function DesktopHeader({
 }: {
   title: string;
   isHome?: boolean;
-  menu: ReturnType<typeof enhanceMenu>;
+  menu: EnhancedMenu;
 }) {
   const { y } = useWindowScroll();
 
@@ -274,108 +273,6 @@ export function DesktopHeader({
   );
 }
 
-export function FooterMenu({ menu }: { menu: ReturnType<typeof enhanceMenu> }) {
-  const styles = {
-    section: "grid gap-4",
-    nav: "grid gap-2 pb-6",
-  };
-
-  return (
-    <>
-      {(menu?.items || []).map((item: EnhancedMenuItem) => (
-        <section key={item.id} className={styles.section}>
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <Disclosure.Button className="text-left md:cursor-default">
-                  <Heading className="flex justify-between" size="lead" as="h3">
-                    {item.title}
-                    {item.items && item.items.length > 0 && (
-                      <span className="md:hidden">
-                        <IconCaret direction={open ? "up" : "down"} />
-                      </span>
-                    )}
-                  </Heading>
-                </Disclosure.Button>
-                {item.items && item.items.length > 0 && (
-                  <div
-                    className={`${
-                      open ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
-                    } overflow-hidden transition-all duration-300`}
-                  >
-                    <Disclosure.Panel static>
-                      <nav className={styles.nav}>
-                        {item.items.map((subItem) =>
-                          subItem.isExternal ? (
-                            <a
-                              key={subItem.id}
-                              href={subItem.to}
-                              target={subItem.target}
-                            >
-                              {subItem.title}
-                            </a>
-                          ) : (
-                            <Link
-                              key={subItem.id}
-                              to={subItem.to}
-                              target={subItem.target}
-                            >
-                              {subItem.title}
-                            </Link>
-                          )
-                        )}
-                      </nav>
-                    </Disclosure.Panel>
-                  </div>
-                )}
-              </>
-            )}
-          </Disclosure>
-        </section>
-      ))}{" "}
-    </>
-  );
-}
-
-export function Footer({ menu }: { menu: ReturnType<typeof enhanceMenu> }) {
-  const location = useLocation();
-  const pathname = location.pathname;
-
-  const localeMatch = /^\/([a-z]{2})(\/|$)/i.exec(pathname);
-  const countryCode = localeMatch ? localeMatch[1] : null;
-
-  const isHome = pathname === `/${countryCode ? countryCode + "/" : ""}`;
-  const itemsCount = menu
-    ? menu?.items?.length + 1 > 4
-      ? 4
-      : menu?.items?.length + 1
-    : [];
-
-  return (
-    <Section
-      divider={isHome ? "none" : "top"}
-      as="footer"
-      role="contentinfo"
-      className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 
-        border-b md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
-        bg-primary dark:bg-contrast dark:text-primary text-contrast overflow-hidden`}
-    >
-      <FooterMenu menu={menu} />
-      {/* <section className="grid gap-4 w-full md:max-w-[335px] md:ml-auto">
-        <Heading size="lead" className="cursor-default" as="h3">
-          Country
-        </Heading>
-        <CountrySelector />
-      </section> */}
-      <div
-        className={`self-end pt-8 opacity-50 md:col-span-2 lg:col-span-${itemsCount}`}
-      >
-        &copy; {new Date().getFullYear()} / Shopify, Inc. Hydrogen is an MIT
-        Licensed Open Source project. This website is carbon&nbsp;neutral.
-      </div>
-    </Section>
-  );
-}
 
 export default function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -490,16 +387,18 @@ function resolveToFromType(
   }
 }
 
-type MenuItem = Omit<MenuFragmentFragment["items"][number], "items"> & {
+export type MenuItem = Omit<MenuFragmentFragment["items"][number], "items"> & {
   items?: MenuItem[];
 };
 
-type EnhancedMenuItem = Omit<MenuItem, "items"> & {
+export type EnhancedMenuItem = Omit<MenuItem, "items"> & {
   isExternal: boolean;
   target: string;
   to: string;
   items?: EnhancedMenuItem[];
 };
+
+export type EnhancedMenu = ReturnType<typeof enhanceMenu>;
 
 function enhanceMenuItem(customPrefixes = {}) {
   return function (item: MenuItem): EnhancedMenuItem {
@@ -528,11 +427,6 @@ function enhanceMenuItem(customPrefixes = {}) {
   };
 }
 
-/*
-  Recursively adds `to` and `target` attributes to links based on their url
-  and resource type.
-  It optionally overwrites url paths based on item.type
-*/
 export function enhanceMenu(menu: MenuFragmentFragment, customPrefixes = {}) {
   invariant(menu.items.length > 0, "Missing menu items");
   return {
