@@ -214,7 +214,7 @@ function resolveToFromType(
   }
 }
 
-export type MenuItem = Omit<MenuFragmentFragment["items"][number], "items"> & {
+type MenuItem = Omit<MenuFragmentFragment["items"][number], "items"> & {
   items?: MenuItem[];
 };
 

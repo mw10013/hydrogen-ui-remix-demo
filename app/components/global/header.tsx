@@ -24,7 +24,7 @@ function CartBadge({ dark }: { dark: boolean }) {
     </div>
   );
 }
-export function MobileHeader({
+function MobileHeader({
   title,
   isHome,
 }: // openMenu,
@@ -95,7 +95,7 @@ export function MobileHeader({
   );
 }
 
-export function DesktopHeader({
+function DesktopHeader({
   title,
   isHome = true,
   menu,
