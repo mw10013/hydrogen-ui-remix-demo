@@ -1,3 +1,4 @@
+import { Disclosure } from "@headlessui/react";
 import type {
   LinksFunction,
   LoaderFunction,
@@ -13,20 +14,20 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
 } from "@remix-run/react";
 import { CartProvider, ShopifyProvider } from "@shopify/hydrogen-react";
 import clsx from "clsx";
 import request from "graphql-request";
 import { useWindowScroll } from "react-use";
 import invariant from "tiny-invariant";
-import { IconBag } from "./components/elements/icon";
+import { Heading } from "./components/elements/heading";
+import { IconBag, IconCaret } from "./components/elements/icon";
+import { Section } from "./components/elements/section";
 import type { FragmentType } from "./lib/gql";
 import { getFragmentData } from "./lib/gql";
 import { graphql } from "./lib/gql/gql";
-import type {
-  LayoutMenusQueryQuery,
-  MenuFragmentFragment,
-} from "./lib/gql/graphql";
+import type { MenuFragmentFragment } from "./lib/gql/graphql";
 import { shopClient } from "./lib/utils";
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 
@@ -34,17 +35,6 @@ export type ContextType = {};
 
 const HEADER_MENU_HANDLE = "main-menu";
 const FOOTER_MENU_HANDLE = "footer";
-
-// export const MenuItemFragment = graphql(`
-//   fragment MenuItemFragment on MenuItem {
-//     id
-//     resourceId
-//     tags
-//     title
-//     type
-//     url
-//   }
-// `);
 
 export const MenuFragment = graphql(`
   fragment MenuFragment on Menu {
@@ -94,21 +84,16 @@ export const loader = (async () => {
     requestHeaders: shopClient.getPublicTokenHeaders(),
   });
 
-  invariant(data.headerMenu, "Missing header menu");
   const customPrefixes = { BLOG: "", CATALOG: "products" };
+  invariant(data.headerMenu, "Missing header menu");
   const headerMenu = enhanceMenu(data.headerMenu, customPrefixes);
-
-  // const headerMenu = data?.headerMenu
-  //   ? parseMenu(data.headerMenu, customPrefixes)
-  //   : undefined;
-
-  // const footerMenu = data?.footerMenu
-  //   ? parseMenu(data.footerMenu, customPrefixes)
-  //   : undefined;
+  invariant(data.footerMenu, "Missing footer menu");
+  const footerMenu = enhanceMenu(data.footerMenu, customPrefixes);
 
   return json({
-    headerMenu,
     shopName: data.shop.name,
+    headerMenu,
+    footerMenu,
     data,
   });
 }) satisfies LoaderFunction;
@@ -140,6 +125,80 @@ function CartBadge({ dark }: { dark: boolean }) {
     >
       <span>{totalQuantity}</span>
     </div>
+  );
+}
+
+function MobileHeader({
+  title,
+  isHome = true,
+}: // openCart,
+// openMenu,
+{
+  title: string;
+  isHome?: boolean;
+  // openCart: () => void;
+  // openMenu: () => void;
+}) {
+  const { y } = useWindowScroll();
+
+  const styles = {
+    button: "relative flex items-center justify-center w-8 h-8",
+    container: `${
+      isHome
+        ? "bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader"
+        : "bg-contrast/80 text-primary"
+    } ${
+      y > 50 && !isHome ? "shadow-lightHeader " : ""
+    }flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`,
+  };
+
+  return (
+    <header role="banner" className={styles.container}>
+      {/* <div className="flex items-center justify-start w-full gap-4">
+        <button onClick={openMenu} className={styles.button}>
+          <IconMenu />
+        </button>
+        <form
+          action={`/${countryCode ? countryCode + '/' : ''}search`}
+          className="items-center gap-2 sm:flex"
+        >
+          <button type="submit" className={styles.button}>
+            <IconSearch />
+          </button>
+          <Input
+            className={
+              isHome
+                ? 'focus:border-contrast/20 dark:focus:border-primary/20'
+                : 'focus:border-primary/20'
+            }
+            type="search"
+            variant="minisearch"
+            placeholder="Search"
+            name="q"
+          />
+        </form>
+      </div> */}
+
+      <Link
+        className="flex items-center self-stretch leading-[3rem] md:leading-[4rem] justify-center flex-grow w-full h-full"
+        to="/"
+      >
+        <Heading className="font-bold text-center" as={isHome ? "h1" : "h2"}>
+          {title}
+        </Heading>
+      </Link>
+
+      <div className="flex items-center justify-end w-full gap-4">
+        {/* <Link to={'/account'} className={styles.button}>
+          <IconAccount />
+        </Link> */}
+        {/* <button onClick={openCart} className={styles.button}> */}
+        <button className={styles.button}>
+          <IconBag />
+          <CartBadge dark={isHome} />
+        </button>
+      </div>
+    </header>
   );
 }
 
@@ -215,9 +274,103 @@ export function DesktopHeader({
   );
 }
 
+export function FooterMenu({menu}: {menu: ReturnType<typeof enhanceMenu>}) {
+  const styles = {
+    section: 'grid gap-4',
+    nav: 'grid gap-2 pb-6',
+  };
+
+  return (
+    <>
+      {(menu?.items || []).map((item: EnhancedMenuItem) => (
+        <section key={item.id} className={styles.section}>
+          <Disclosure>
+            {({open}) => (
+              <>
+                <Disclosure.Button className="text-left md:cursor-default">
+                  <Heading className="flex justify-between" size="lead" as="h3">
+                    {item.title}
+                    {item.items && item.items.length > 0 && (
+                      <span className="md:hidden">
+                        <IconCaret direction={open ? 'up' : 'down'} />
+                      </span>
+                    )}
+                  </Heading>
+                </Disclosure.Button>
+                {item.items && item.items.length > 0 && (
+                  <div
+                    className={`${
+                      open ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
+                    } overflow-hidden transition-all duration-300`}
+                  >
+                    <Disclosure.Panel static>
+                      <nav className={styles.nav}>
+                        {item.items.map((subItem) => (
+                          <Link
+                            key={subItem.id}
+                            to={subItem.to}
+                            target={subItem.target}
+                          >
+                            {subItem.title}
+                          </Link>
+                        ))}
+                      </nav>
+                    </Disclosure.Panel>
+                  </div>
+                )}
+              </>
+            )}
+          </Disclosure>
+        </section>
+      ))}{' '}
+    </>
+  );
+}
+
+export function Footer({ menu }: { menu: ReturnType<typeof enhanceMenu> }) {
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  const localeMatch = /^\/([a-z]{2})(\/|$)/i.exec(pathname);
+  const countryCode = localeMatch ? localeMatch[1] : null;
+
+  const isHome = pathname === `/${countryCode ? countryCode + "/" : ""}`;
+  const itemsCount = menu
+    ? menu?.items?.length + 1 > 4
+      ? 4
+      : menu?.items?.length + 1
+    : [];
+
+  return (
+    <Section
+      divider={isHome ? "none" : "top"}
+      as="footer"
+      role="contentinfo"
+      className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 
+        border-b md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
+        bg-primary dark:bg-contrast dark:text-primary text-contrast overflow-hidden`}
+    >
+      <FooterMenu menu={menu} />
+      {/* <section className="grid gap-4 w-full md:max-w-[335px] md:ml-auto">
+        <Heading size="lead" className="cursor-default" as="h3">
+          Country
+        </Heading>
+        <CountrySelector />
+      </section> */}
+      <div
+        className={`self-end pt-8 opacity-50 md:col-span-2 lg:col-span-${itemsCount}`}
+      >
+        &copy; {new Date().getFullYear()} / Shopify, Inc. Hydrogen is an MIT
+        Licensed Open Source project. This website is carbon&nbsp;neutral.
+      </div>
+    </Section>
+  );
+}
+
 export default function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { shopName, headerMenu, data } = useLoaderData<typeof loader>();
+  const { shopName, headerMenu, footerMenu, data } =
+    useLoaderData<typeof loader>();
   const context: ContextType = {};
 
   return (
@@ -236,17 +389,19 @@ export default function App() {
           }}
         >
           <CartProvider>
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen bg-slate-300">
               <div className="">
                 <a href="#mainContent" className="sr-only">
                   Skip to content
                 </a>
               </div>
               <DesktopHeader title={shopName} menu={headerMenu} />
+              <MobileHeader title={shopName} />
               <main role="main" id="mainContent" className="flex-grow">
                 <Outlet context={context} />
               </main>
             </div>
+            <Footer menu={footerMenu} />
           </CartProvider>
         </ShopifyProvider>
         <ScrollRestoration />
