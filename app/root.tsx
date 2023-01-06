@@ -89,6 +89,7 @@ export const loader = (async () => {
   const headerMenu = enhanceMenu(data.headerMenu, customPrefixes);
   invariant(data.footerMenu, "Missing footer menu");
   const footerMenu = enhanceMenu(data.footerMenu, customPrefixes);
+  console.log(JSON.stringify(footerMenu, null, 2));
 
   return json({
     shopName: data.shop.name,
@@ -274,10 +275,10 @@ export function DesktopHeader({
   );
 }
 
-export function FooterMenu({menu}: {menu: ReturnType<typeof enhanceMenu>}) {
+export function FooterMenu({ menu }: { menu: ReturnType<typeof enhanceMenu> }) {
   const styles = {
-    section: 'grid gap-4',
-    nav: 'grid gap-2 pb-6',
+    section: "grid gap-4",
+    nav: "grid gap-2 pb-6",
   };
 
   return (
@@ -285,14 +286,14 @@ export function FooterMenu({menu}: {menu: ReturnType<typeof enhanceMenu>}) {
       {(menu?.items || []).map((item: EnhancedMenuItem) => (
         <section key={item.id} className={styles.section}>
           <Disclosure>
-            {({open}) => (
+            {({ open }) => (
               <>
                 <Disclosure.Button className="text-left md:cursor-default">
                   <Heading className="flex justify-between" size="lead" as="h3">
                     {item.title}
                     {item.items && item.items.length > 0 && (
                       <span className="md:hidden">
-                        <IconCaret direction={open ? 'up' : 'down'} />
+                        <IconCaret direction={open ? "up" : "down"} />
                       </span>
                     )}
                   </Heading>
@@ -305,15 +306,25 @@ export function FooterMenu({menu}: {menu: ReturnType<typeof enhanceMenu>}) {
                   >
                     <Disclosure.Panel static>
                       <nav className={styles.nav}>
-                        {item.items.map((subItem) => (
-                          <Link
-                            key={subItem.id}
-                            to={subItem.to}
-                            target={subItem.target}
-                          >
-                            {subItem.title}
-                          </Link>
-                        ))}
+                        {item.items.map((subItem) =>
+                          subItem.isExternal ? (
+                            <a
+                              key={subItem.id}
+                              href={subItem.to}
+                              target={subItem.target}
+                            >
+                              {subItem.title}
+                            </a>
+                          ) : (
+                            <Link
+                              key={subItem.id}
+                              to={subItem.to}
+                              target={subItem.target}
+                            >
+                              {subItem.title}
+                            </Link>
+                          )
+                        )}
                       </nav>
                     </Disclosure.Panel>
                   </div>
@@ -322,7 +333,7 @@ export function FooterMenu({menu}: {menu: ReturnType<typeof enhanceMenu>}) {
             )}
           </Disclosure>
         </section>
-      ))}{' '}
+      ))}{" "}
     </>
   );
 }
@@ -402,6 +413,7 @@ export default function App() {
               </main>
             </div>
             <Footer menu={footerMenu} />
+            <pre>{JSON.stringify(data, null, 2)}</pre>
           </CartProvider>
         </ShopifyProvider>
         <ScrollRestoration />
