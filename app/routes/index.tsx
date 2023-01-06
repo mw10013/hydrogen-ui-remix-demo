@@ -5,32 +5,125 @@ import { graphql } from "~/lib/gql/gql";
 import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
 import { Image } from "@shopify/hydrogen-react";
-// import type {IndexQueryQuery} from '../gql/graphql';
+
+export const MediaFragment = graphql(`
+  fragment MediaFragment on Media {
+    mediaContentType
+    alt
+    previewImage {
+      url
+    }
+    ... on MediaImage {
+      id
+      image {
+        url
+        width
+        height
+      }
+    }
+    ... on Video {
+      id
+      sources {
+        mimeType
+        url
+      }
+    }
+    ... on Model3d {
+      id
+      sources {
+        mimeType
+        url
+      }
+    }
+    ... on ExternalVideo {
+      id
+      embedUrl
+      host
+    }
+  }
+`);
+
+export const ProductCardFragment = graphql(`
+  fragment ProductCardFragment on Product {
+    id
+    title
+    publishedAt
+    handle
+    variants(first: 1) {
+      nodes {
+        id
+        image {
+          url
+          altText
+          width
+          height
+        }
+        priceV2 {
+          amount
+          currencyCode
+        }
+        compareAtPriceV2 {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
+`);
 
 const query = graphql(`
-  query IndexQuery {
-    shop {
-      name
-    }
-    products(first: 1) {
+  query homepage {
+    heroBanners: collections(
+      first: 3
+      query: "collection_type:custom"
+      sortKey: UPDATED_AT
+    ) {
       nodes {
-        # if you uncomment 'blah', it should have a GraphQL validation error in your IDE if you have a GraphQL plugin. It should also give an error during 'npm run dev'
-        # blah
         id
-        title
-        publishedAt
         handle
-        variants(first: 1) {
-          nodes {
-            id
-            image {
-              url
-              altText
-              width
-              height
-            }
+        title
+        descriptionHtml
+        heading: metafield(namespace: "hero", key: "title") {
+          value
+        }
+        byline: metafield(namespace: "hero", key: "byline") {
+          value
+        }
+        cta: metafield(namespace: "hero", key: "cta") {
+          value
+        }
+        spread: metafield(namespace: "hero", key: "spread") {
+          reference {
+            ...MediaFragment
           }
         }
+        spreadSecondary: metafield(namespace: "hero", key: "spread_secondary") {
+          reference {
+            ...MediaFragment
+          }
+        }
+      }
+    }
+    featuredCollections: collections(
+      first: 3
+      query: "collection_type:smart"
+      sortKey: UPDATED_AT
+    ) {
+      nodes {
+        id
+        title
+        handle
+        image {
+          altText
+          width
+          height
+          url
+        }
+      }
+    }
+    featuredProducts: products(first: 12) {
+      nodes {
+        ...ProductCardFragment
       }
     }
   }
@@ -54,13 +147,13 @@ export default function Index() {
   // const { session } = useOutletContext<ContextType>();
   return (
     <div className="mt-8 ml-8">
-      <h1 className="font-bold text-lg">Welcome to {data.shop?.name}</h1>
+      {/* <h1 className="font-bold text-lg">Welcome to {data.shop?.name}</h1>
       <Image
         data={data.products.nodes[0].variants.nodes[0].image ?? {}}
         width={500}
         loading="eager"
-      />
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+      /> */}
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 }

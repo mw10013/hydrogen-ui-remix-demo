@@ -7,7 +7,7 @@
     "build:remix": "remix build",
     "dev": "run-p dev:*",
     "dev:css": "pnpm generate:css --watch",
-    "dev:remix": "remix dev",
+    "dev:remix": "PORT=3001 remix dev",
     "generate:css": "tailwindcss -i ./styles/tailwind.css -o ./app/styles/tailwind.css",
     "codegen": "graphql-codegen --config graphql-codegen.config.ts",
     "test": "vitest",
