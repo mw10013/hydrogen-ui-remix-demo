@@ -11,8 +11,8 @@ const config: CodegenConfig = {
       plugins: [],
       presetConfig: {
         // https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#the-usefragment-helper
-        fragmentMasking: { unmaskFunctionName: "getFragmentData" },
-        // fragmentMasking: false,
+        // fragmentMasking: { unmaskFunctionName: "getFragmentData" },
+        fragmentMasking: false,
       },
       config: {
         // https://the-guild.dev/graphql/codegen/plugins/typescript/typescript#config-api-reference

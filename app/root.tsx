@@ -24,8 +24,6 @@ import invariant from "tiny-invariant";
 import { Heading } from "./components/elements/heading";
 import { IconBag, IconCaret } from "./components/elements/icon";
 import { Section } from "./components/elements/section";
-import type { FragmentType } from "./lib/gql";
-import { getFragmentData } from "./lib/gql";
 import { graphql } from "./lib/gql/gql";
 import type { MenuFragmentFragment } from "./lib/gql/graphql";
 import { shopClient } from "./lib/utils";
@@ -535,13 +533,8 @@ function enhanceMenuItem(customPrefixes = {}) {
   and resource type.
   It optionally overwrites url paths based on item.type
 */
-export function enhanceMenu(
-  menuFragment: FragmentType<typeof MenuFragment>,
-  customPrefixes = {}
-) {
-  const menu = getFragmentData(MenuFragment, menuFragment);
+export function enhanceMenu(menu: MenuFragmentFragment, customPrefixes = {}) {
   invariant(menu.items.length > 0, "Missing menu items");
-
   return {
     ...menu,
     items: menu.items.map(enhanceMenuItem(customPrefixes)),

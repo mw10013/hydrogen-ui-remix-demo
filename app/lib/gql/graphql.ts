@@ -6790,7 +6790,7 @@ export type WeightUnit =
   /** 1 pound equals 16 ounces. */
   | 'POUNDS';
 
-export type MenuFragmentFragment = { __typename?: 'Menu', id: string, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null }> }> } & { ' $fragmentName'?: 'MenuFragmentFragment' };
+export type MenuFragmentFragment = { __typename?: 'Menu', id: string, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null }> }> };
 
 export type LayoutMenusQueryQueryVariables = Exact<{
   headerMenuHandle: Scalars['String'];
@@ -6798,13 +6798,7 @@ export type LayoutMenusQueryQueryVariables = Exact<{
 }>;
 
 
-export type LayoutMenusQueryQuery = { __typename?: 'QueryRoot', shop: { __typename?: 'Shop', name: string }, headerMenu?: (
-    { __typename?: 'Menu' }
-    & { ' $fragmentRefs'?: { 'MenuFragmentFragment': MenuFragmentFragment } }
-  ) | null, footerMenu?: (
-    { __typename?: 'Menu' }
-    & { ' $fragmentRefs'?: { 'MenuFragmentFragment': MenuFragmentFragment } }
-  ) | null };
+export type LayoutMenusQueryQuery = { __typename?: 'QueryRoot', shop: { __typename?: 'Shop', name: string }, headerMenu?: { __typename?: 'Menu', id: string, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null }> }> } | null, footerMenu?: { __typename?: 'Menu', id: string, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null, items: Array<{ __typename?: 'MenuItem', id: string, resourceId?: string | null, title: string, type: MenuItemType, url?: string | null }> }> } | null };
 
 export type IndexQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
