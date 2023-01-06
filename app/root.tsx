@@ -38,19 +38,21 @@ export const MenuFragment = graphql(`
   fragment MenuFragment on Menu {
     id
     items {
-      id
-      resourceId
-      title
-      type
-      url
+      ...MenuItemFragment
       items {
-        id
-        resourceId
-        title
-        type
-        url
+        ...MenuItemFragment
       }
     }
+  }
+`);
+
+export const MenuItemFragment = graphql(`
+  fragment MenuItemFragment on MenuItem {
+    id
+    resourceId
+    title
+    type
+    url
   }
 `);
 
@@ -87,7 +89,6 @@ export const loader = (async () => {
   const headerMenu = enhanceMenu(data.headerMenu, customPrefixes);
   invariant(data.footerMenu, "Missing footer menu");
   const footerMenu = enhanceMenu(data.footerMenu, customPrefixes);
-  console.log(JSON.stringify(footerMenu, null, 2));
 
   return json({
     shopName: data.shop.name,
@@ -411,7 +412,6 @@ export default function App() {
               </main>
             </div>
             <Footer menu={footerMenu} />
-            <pre>{JSON.stringify(data, null, 2)}</pre>
           </CartProvider>
         </ShopifyProvider>
         <ScrollRestoration />
