@@ -5,6 +5,7 @@ import { graphql } from "~/lib/gql/gql";
 import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
 import { Hero } from "~/components/sections/hero";
+import { ProductSwimlane } from "~/components/sections/product-swimlane";
 
 export const MediaFragment = graphql(`
   fragment MediaFragment on Media {
@@ -149,18 +150,14 @@ export default function Index() {
   return (
     <>
       <Hero {...(primaryHero as any)} height="full" top loading="eager" />
+      <ProductSwimlane
+        data={data.featuredProducts.nodes}
+        title="Featured Products"
+        divider="bottom"
+      />
+      <Hero {...(secondaryHero as any)} />
+      <Hero {...(tertiaryHero as any)} />
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 }
-
-/*
-
-Type '{ height: "full"; top: true; loading: "eager"; id: string; handle: string; title: string; descriptionHtml: string; __typename?: "Collection" | undefined; heading?: SerializeObject<UndefinedToOptional<{ __typename?: "Metafield" | undefined; value: string; }>> | null | undefined; byline?: SerializeObject<...> | ... 1 ...' 
-  is not assignable to type 
-  '{ byline: Metafield; cta: Metafield; handle: string; heading: Metafield; height?: "full" | undefined; loading?: "eager" | "lazy" | undefined; spread: Metafield; spreadSecondary: Metafield; top?: boolean | undefined; }'.
-  Types of property 'byline' are incompatible.
-    Type 'SerializeObject<UndefinedToOptional<{ __typename?: "Metafield" | undefined; value: string; }>> | null | undefined' is not assignable to type 'Metafield'.
-      Type 'undefined' is not assignable to type 'Metafield'.ts(2322)
-
-*/
