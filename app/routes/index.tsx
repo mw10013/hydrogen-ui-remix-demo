@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { graphql } from "~/lib/gql/gql";
 import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
-import { Image } from "@shopify/hydrogen-react";
+import { Hero } from "~/components/sections/hero";
 
 export const MediaFragment = graphql(`
   fragment MediaFragment on Media {
@@ -143,17 +143,24 @@ export const loader = (async () => {
 
 export default function Index() {
   const { data } = useLoaderData<typeof loader>();
+  const [primaryHero, secondaryHero, tertiaryHero] = data.heroBanners.nodes;
 
   // const { session } = useOutletContext<ContextType>();
   return (
-    <div className="mt-8 ml-8">
-      {/* <h1 className="font-bold text-lg">Welcome to {data.shop?.name}</h1>
-      <Image
-        data={data.products.nodes[0].variants.nodes[0].image ?? {}}
-        width={500}
-        loading="eager"
-      /> */}
+    <>
+      <Hero {...(primaryHero as any)} height="full" top loading="eager" />
       <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
+    </>
   );
 }
+
+/*
+
+Type '{ height: "full"; top: true; loading: "eager"; id: string; handle: string; title: string; descriptionHtml: string; __typename?: "Collection" | undefined; heading?: SerializeObject<UndefinedToOptional<{ __typename?: "Metafield" | undefined; value: string; }>> | null | undefined; byline?: SerializeObject<...> | ... 1 ...' 
+  is not assignable to type 
+  '{ byline: Metafield; cta: Metafield; handle: string; heading: Metafield; height?: "full" | undefined; loading?: "eager" | "lazy" | undefined; spread: Metafield; spreadSecondary: Metafield; top?: boolean | undefined; }'.
+  Types of property 'byline' are incompatible.
+    Type 'SerializeObject<UndefinedToOptional<{ __typename?: "Metafield" | undefined; value: string; }>> | null | undefined' is not assignable to type 'Metafield'.
+      Type 'undefined' is not assignable to type 'Metafield'.ts(2322)
+
+*/

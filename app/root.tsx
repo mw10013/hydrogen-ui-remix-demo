@@ -124,7 +124,7 @@ export default function App() {
           }}
         >
           <CartProvider>
-            <div className="flex flex-col min-h-screen bg-slate-300">
+            <div className="flex flex-col min-h-screen">
               <div className="">
                 <a href="#mainContent" className="sr-only">
                   Skip to content
