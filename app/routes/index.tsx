@@ -6,6 +6,7 @@ import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
 import { Hero } from "~/components/sections/hero";
 import { ProductSwimlane } from "~/components/sections/product-swimlane";
+import { FeaturedCollections } from "~/components/sections/featured-collections";
 
 export const MediaFragment = graphql(`
   fragment MediaFragment on Media {
@@ -156,6 +157,10 @@ export default function Index() {
         divider="bottom"
       />
       <Hero {...(secondaryHero as any)} />
+      <FeaturedCollections
+        data={data.featuredCollections.nodes as any}
+        title="Collections"
+      />
       <Hero {...(tertiaryHero as any)} />
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
