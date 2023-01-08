@@ -8,6 +8,7 @@ import { request } from "graphql-request";
 import { graphql } from "~/lib/gql/gql";
 import { PAGINATION_SIZE } from "~/lib/const";
 import { useLoaderData } from "@remix-run/react";
+import { ProductGrid } from "~/components/product/product-grid";
 
 const query = graphql(`
   query AllProducts($pageBy: Int!, $cursor: String) {
@@ -58,40 +59,26 @@ export default function AllProducts() {
   return (
     <>
       <PageHeader heading="All Products" variant="allCollections" />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-      {/* <Section>
+      <Section>
         <AllProductsGrid />
-      </Section> */}
+      </Section>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 }
 
-// function AllProductsGrid() {
-//   const {
-//     language: { isoCode: languageCode },
-//     country: { isoCode: countryCode },
-//   } = useLocalization();
+function AllProductsGrid() {
+  const { data } = useLoaderData<typeof loader>();
+  const products = data.products;
 
-//   const { data } = useShopQuery<any>({
-//     query: ALL_PRODUCTS_QUERY,
-//     variables: {
-//       country: countryCode,
-//       language: languageCode,
-//       pageBy: PAGINATION_SIZE,
-//     },
-//     preload: true,
-//   });
-
-//   const products = data.products;
-
-//   return (
-//     <ProductGrid
-//       key="products"
-//       url={`/products?country=${countryCode}`}
-//       collection={{ products } as Collection}
-//     />
-//   );
-// }
+  return (
+    <ProductGrid
+      key="products"
+      url={`/products`}
+      collection={{ products } as Collection}
+    />
+  );
+}
 
 // API to paginate products
 // @see templates/demo-store/src/components/product/ProductGrid.client.tsx
