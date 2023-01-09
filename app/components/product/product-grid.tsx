@@ -12,10 +12,10 @@ import { Button } from "../elements/button";
 import type { loader } from "~/routes/products";
 
 export function ProductGrid({
-  url,
+  // url,
   collection,
 }: {
-  url: string;
+  // url: string;
   collection: Collection;
 }) {
   const nextButtonRef = useRef(null);
@@ -67,9 +67,7 @@ export function ProductGrid({
     const observer = new IntersectionObserver(handleIntersect, {
       rootMargin: "100%",
     });
-
     const nextButton = nextButtonRef.current;
-
     if (nextButton) observer.observe(nextButton);
 
     return () => {
