@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { Listbox } from "@headlessui/react";
 import { Text } from "../elements/text";
 import { IconCaret, IconCheck } from "../elements/icon";
+import { useProduct } from "@shopify/hydrogen-react";
 
 export function ProductOptions({
   values,
@@ -28,7 +29,7 @@ function OptionsGrid({
   name: string;
   handleChange: (name: string, value: string) => void;
 }) {
-  const { selectedOptions } = useProductOptions();
+  const { selectedOptions } = useProduct();
 
   return (
     <>
@@ -72,7 +73,7 @@ function OptionsDropdown({
   handleChange: (name: string, value: string) => void;
 }) {
   const [listboxOpen, setListboxOpen] = useState(false);
-  const { selectedOptions } = useProductOptions();
+  const { selectedOptions } = useProduct();
 
   const updateSelectedOption = useCallback(
     (value: string) => {

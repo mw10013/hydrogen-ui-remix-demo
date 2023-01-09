@@ -1,79 +1,81 @@
-import {useEffect, useCallback, useState} from 'react';
+import { useEffect, useCallback, useState } from "react";
 
-import type {
-  OptionWithValues} from '@shopify/hydrogen-react';
-import {
-  AddToCartButton,
-  Money,
-  ShopPayButton,
-} from '@shopify/hydrogen-react';
-
-import {Heading, Text, Button, ProductOptions} from '~/components';
+import type { OptionWithValues } from "@shopify/hydrogen-react/dist/types/ProductProvider";
+import { useProduct } from "@shopify/hydrogen-react";
+import { AddToCartButton, Money, ShopPayButton } from "@shopify/hydrogen-react";
+import { Heading } from "../elements/heading";
+import { Button } from "../elements/button";
+import { Text } from "~/components/elements/text";
+import { ProductOptions } from "./product-options";
 
 export function ProductForm() {
-  const {pathname, search} = useUrl();
-  const [params, setParams] = useState(new URLSearchParams(search));
+  //   const { pathname, search } = useUrl();
+  //   const [params, setParams] = useState(new URLSearchParams(search));
 
-  const {options, setSelectedOption, selectedOptions, selectedVariant} =
-    useProductOptions();
+  const { options, setSelectedOption, selectedOptions, selectedVariant } =
+    useProduct();
 
   const isOutOfStock = !selectedVariant?.availableForSale || false;
   const isOnSale =
     selectedVariant?.priceV2?.amount <
       selectedVariant?.compareAtPriceV2?.amount || false;
 
-  useEffect(() => {
-    if (params || !search) return;
-    setParams(new URLSearchParams(search));
-  }, [params, search]);
+  //   useEffect(() => {
+  //     if (params || !search) return;
+  //     setParams(new URLSearchParams(search));
+  //   }, [params, search]);
 
-  useEffect(() => {
-    (options as OptionWithValues[]).map(({name, values}) => {
-      if (!params) return;
-      const currentValue = params.get(name.toLowerCase()) || null;
-      if (currentValue) {
-        const matchedValue = values.filter(
-          (value) => encodeURIComponent(value.toLowerCase()) === currentValue,
-        );
-        setSelectedOption(name, matchedValue[0]);
-      } else {
-        params.set(
-          encodeURIComponent(name.toLowerCase()),
-          encodeURIComponent(selectedOptions![name]!.toLowerCase()),
-        ),
-          window.history.replaceState(
-            null,
-            '',
-            `${pathname}?${params.toString()}`,
-          );
-      }
-    });
-  }, []);
+//   useEffect(() => {
+//     (options as OptionWithValues[]).map(({ name, values }) => {
+//       if (!params) return;
+//       const currentValue = params.get(name.toLowerCase()) || null;
+//       if (currentValue) {
+//         const matchedValue = values.filter(
+//           (value) => encodeURIComponent(value.toLowerCase()) === currentValue
+//         );
+//         setSelectedOption(name, matchedValue[0]);
+//       } else {
+//         params.set(
+//           encodeURIComponent(name.toLowerCase()),
+//           encodeURIComponent(selectedOptions![name]!.toLowerCase())
+//         ),
+//           window.history.replaceState(
+//             null,
+//             "",
+//             `${pathname}?${params.toString()}`
+//           );
+//       }
+//     });
+//   }, []);
 
-  const handleChange = useCallback(
-    (name: string, value: string) => {
-      setSelectedOption(name, value);
-      if (!params) return;
-      params.set(
-        encodeURIComponent(name.toLowerCase()),
-        encodeURIComponent(value.toLowerCase()),
-      );
-      if (isBrowser()) {
-        window.history.replaceState(
-          null,
-          '',
-          `${pathname}?${params.toString()}`,
-        );
-      }
-    },
-    [setSelectedOption, params, pathname],
-  );
+//   const handleChange = useCallback(
+//     (name: string, value: string) => {
+//       setSelectedOption(name, value);
+//       if (!params) return;
+//       params.set(
+//         encodeURIComponent(name.toLowerCase()),
+//         encodeURIComponent(value.toLowerCase())
+//       );
+//       if (isBrowser()) {
+//         window.history.replaceState(
+//           null,
+//           "",
+//           `${pathname}?${params.toString()}`
+//         );
+//       }
+//     },
+//     [setSelectedOption, params, pathname]
+//   );
+
+  const handleChange = useCallback((name: string, value: string) => {
+    setSelectedOption(name, value);
+  }, [setSelectedOption]);
 
   return (
     <form className="grid gap-10">
       {
         <div className="grid gap-4">
-          {(options as OptionWithValues[]).map(({name, values}) => {
+          {(options as OptionWithValues[]).map(({ name, values }) => {
             if (values.length === 1) {
               return null;
             }
@@ -107,7 +109,7 @@ export function ProductForm() {
         >
           <Button
             width="full"
-            variant={isOutOfStock ? 'secondary' : 'primary'}
+            variant={isOutOfStock ? "secondary" : "primary"}
             as="span"
           >
             {isOutOfStock ? (
@@ -117,7 +119,7 @@ export function ProductForm() {
                 as="span"
                 className="flex items-center justify-center gap-2"
               >
-                <span>Add to bag</span> <span>·</span>{' '}
+                <span>Add to bag</span> <span>·</span>{" "}
                 <Money
                   withoutTrailingZeros
                   data={selectedVariant.priceV2!}

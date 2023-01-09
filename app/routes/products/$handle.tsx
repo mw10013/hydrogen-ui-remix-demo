@@ -11,6 +11,7 @@ import { getExcerpt, shopClient } from "~/lib/utils";
 import { Text } from "~/components/elements/text";
 import { ProductProvider } from "@shopify/hydrogen-react";
 import { ProductDetail } from "~/components/product/product-detail";
+import { ProductForm } from "~/components/product/product-form";
 
 const query = graphql(`
   query Product($handle: String!) {
@@ -124,7 +125,7 @@ export default function Product() {
                 <Text className={"opacity-50 font-medium"}>{vendor}</Text>
               )}
             </div>
-            {/* <ProductForm /> */}
+            <ProductForm />
             <div className="grid gap-4 py-4">
               {descriptionHtml && (
                 <ProductDetail
