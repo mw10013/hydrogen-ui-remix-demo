@@ -5,11 +5,11 @@ import type {
   Collection,
   Product,
 } from "@shopify/hydrogen-react/storefront-api-types";
-import { Link, useFetcher } from "@remix-run/react";
+import { Link, useFetcher, useLocation } from "@remix-run/react";
 import { Grid } from "../elements/grid";
 import { ProductCard } from "../cards/product-card";
 import { Button } from "../elements/button";
-import { action } from "~/routes/products";
+import type { loader } from "~/routes/products";
 
 export function ProductGrid({
   url,
@@ -24,13 +24,14 @@ export function ProductGrid({
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [cursor, setCursor] = useState(endCursor ?? "");
   const [nextPage, setNextPage] = useState(hasNextPage);
-  const [pending, setPending] = useState(false);
   const haveProducts = initialProducts.length > 0;
-  const fetcher = useFetcher<typeof action>();
+  const fetcher = useFetcher<typeof loader>();
+  const location = useLocation();
 
-  const fetchProducts = useCallback(async () => {
-    setPending(true);
-    fetcher.submit(new URLSearchParams({cursor}), {method: "post"})
+  const fetchProducts = useCallback(() => {
+    const href = `${location.pathname}?index&cursor=${cursor}`;
+    fetcher.load(href);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 
   useEffect(() => {
@@ -48,7 +49,6 @@ export function ProductGrid({
       setProducts((prev) => [...prev, ...newProducts]);
       setCursor(endCursor);
       setNextPage(hasNextPage);
-      setPending(false);
     }
   }, [fetcher.data]);
 
@@ -107,11 +107,11 @@ export function ProductGrid({
         >
           <Button
             variant="secondary"
-            disabled={pending}
+            disabled={fetcher.state === "loading"}
             onClick={fetchProducts}
             width="full"
           >
-            {fetcher.state === "submitting" ? "Loading..." : "Load more products"}
+            {fetcher.state === "loading" ? "Loading..." : "Load more products"}
           </Button>
         </div>
       )}

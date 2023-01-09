@@ -40,15 +40,25 @@ const pageQuery = graphql(`
   }
 `);
 
-export const loader = (async () => {
-  const data = await graphqlRequest({
-    url: shopClient.getStorefrontApiUrl(),
-    document: query,
-    requestHeaders: shopClient.getPublicTokenHeaders(),
-    variables: {
-      pageBy: PAGINATION_SIZE,
-    },
-  });
+export const loader = (async ({ params: { cursor } }) => {
+  const data = cursor
+    ? await graphqlRequest({
+        url: shopClient.getStorefrontApiUrl(),
+        document: pageQuery,
+        requestHeaders: shopClient.getPublicTokenHeaders(),
+        variables: {
+          pageBy: PAGINATION_SIZE,
+          cursor,
+        },
+      })
+    : await graphqlRequest({
+        url: shopClient.getStorefrontApiUrl(),
+        document: query,
+        requestHeaders: shopClient.getPublicTokenHeaders(),
+        variables: {
+          pageBy: PAGINATION_SIZE,
+        },
+      });
   return json({
     data,
   });
