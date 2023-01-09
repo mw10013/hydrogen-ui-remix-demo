@@ -1,14 +1,15 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
 import { Section } from "~/components/elements/section";
 import { PageHeader } from "~/components/global/page-header";
 import { shopClient } from "~/lib/utils";
-import { request } from "graphql-request";
+import { request as graphqlRequest } from "graphql-request";
 import { graphql } from "~/lib/gql/gql";
 import { PAGINATION_SIZE } from "~/lib/const";
 import { useLoaderData } from "@remix-run/react";
 import { ProductGrid } from "~/components/product/product-grid";
+import invariant from "tiny-invariant";
 
 const query = graphql(`
   query AllProducts($pageBy: Int!, $cursor: String) {
@@ -40,7 +41,7 @@ const pageQuery = graphql(`
 `);
 
 export const loader = (async () => {
-  const data = await request({
+  const data = await graphqlRequest({
     url: shopClient.getStorefrontApiUrl(),
     document: query,
     requestHeaders: shopClient.getPublicTokenHeaders(),
@@ -48,11 +49,28 @@ export const loader = (async () => {
       pageBy: PAGINATION_SIZE,
     },
   });
-
   return json({
     data,
   });
 }) satisfies LoaderFunction;
+
+export const action = (async ({ request }) => {
+  const formData = await request.formData();
+  const cursor = formData.get("cursor");
+  invariant(typeof cursor === "string", "Invalid cursor");
+  const data = await graphqlRequest({
+    url: shopClient.getStorefrontApiUrl(),
+    document: pageQuery,
+    requestHeaders: shopClient.getPublicTokenHeaders(),
+    variables: {
+      pageBy: PAGINATION_SIZE,
+      cursor,
+    },
+  });
+  return json({
+    data,
+  });
+}) satisfies ActionFunction;
 
 export default function AllProducts() {
   const { data } = useLoaderData<typeof loader>();
