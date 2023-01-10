@@ -29,10 +29,12 @@ function CartBadge({ dark }: { dark: boolean }) {
 function MobileHeader({
   title,
   isHome,
-}: // openMenu,
+  openCart,
+}: 
 {
   title: string;
   isHome: boolean;
+  openCart: () => void;
 }) {
   const { y } = useWindowScroll();
 
@@ -87,8 +89,7 @@ function MobileHeader({
         {/* <Link to={'/account'} className={styles.button}>
               <IconAccount />
             </Link> */}
-        {/* <button onClick={openCart} className={styles.button}> */}
-        <button className={styles.button}>
+        <button onClick={openCart} className={styles.button}>
           <IconBag />
           <CartBadge dark={isHome} />
         </button>

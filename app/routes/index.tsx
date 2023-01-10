@@ -97,7 +97,6 @@ export default function Index() {
         title="Collections"
       />
       <Hero {...(tertiaryHero as any)} />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 }
