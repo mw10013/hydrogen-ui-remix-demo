@@ -2,9 +2,9 @@ import { useRef } from "react";
 import { useScroll } from "react-use";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
 import { Text } from "~/components/elements/text";
-import { Button } from "../elements/button";
-import { Heading } from "../elements/heading";
-import { Skeleton } from "../elements/skeleton";
+import { Button } from "../elements/Button";
+import { Heading } from "../elements/Heading";
+import { Skeleton } from "../elements/Skeleton";
 
 export function CartEmpty({
   onClose,

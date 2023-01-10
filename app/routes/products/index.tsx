@@ -8,7 +8,7 @@ import { request as graphqlRequest } from "graphql-request";
 import { graphql } from "~/lib/gql/gql";
 import { PAGINATION_SIZE } from "~/lib/const";
 import { useLoaderData } from "@remix-run/react";
-import { ProductGrid } from "~/components/product/product-grid";
+import { ProductGrid } from "~/components/product/ProductGrid";
 
 const query = graphql(`
   query AllProducts($pageBy: Int!, $cursor: String) {

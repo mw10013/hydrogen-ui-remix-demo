@@ -16,8 +16,8 @@ import {
 import { CartProvider, ShopifyProvider } from "@shopify/hydrogen-react";
 import request from "graphql-request";
 import invariant from "tiny-invariant";
-import { Footer } from "./components/global/footer";
-import { Header } from "./components/global/header";
+import { Footer } from "./components/global/Footer";
+import { Header } from "./components/global/Header";
 import { graphql } from "./lib/gql/gql";
 import type { MenuFragmentFragment } from "./lib/gql/graphql";
 import { shopClient } from "./lib/utils";

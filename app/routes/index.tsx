@@ -6,7 +6,7 @@ import { request } from "graphql-request";
 import { shopClient } from "~/lib/utils";
 import { Hero } from "~/components/sections/hero";
 import { ProductSwimlane } from "~/components/sections/product-swimlane";
-import { FeaturedCollections } from "~/components/sections/featured-collections";
+import { FeaturedCollections } from "~/components/sections/FeaturedCollections";
 
 const query = graphql(`
   query homepage {

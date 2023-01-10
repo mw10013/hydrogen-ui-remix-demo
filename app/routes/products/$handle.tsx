@@ -3,15 +3,15 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import request from "graphql-request";
 import invariant from "tiny-invariant";
-import { Heading } from "~/components/elements/heading";
+import { Heading } from "~/components/elements/Heading";
 import { Section } from "~/components/elements/section";
-import { NotFound } from "~/components/global/not-found";
+import { NotFound } from "~/components/global/NotFound";
 import { graphql } from "~/lib/gql/gql";
 import { getExcerpt, shopClient } from "~/lib/utils";
 import { Text } from "~/components/elements/text";
 import { ProductProvider } from "@shopify/hydrogen-react";
-import { ProductDetail } from "~/components/product/product-detail";
-import { ProductForm } from "~/components/product/product-form";
+import { ProductDetail } from "~/components/product/ProductDetail";
+import { ProductForm } from "~/components/product/ProductForm";
 
 const query = graphql(`
   query Product($handle: String!) {

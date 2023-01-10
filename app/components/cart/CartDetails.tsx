@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { useScroll } from "react-use";
 import { useCart, Money } from "@shopify/hydrogen-react";
-import { Text } from "~/components/elements/text";
+import { Text } from "~/components/elements/Text";
 import { CartEmpty } from "./CartEmpty";
 import { CartLineItem } from "./CartLineItem";
 import { Link } from "@remix-run/react";
-import { Button } from "../elements/button";
+import { Button } from "../elements/Button";
 import { CartLineProvider } from "./CartLineProvider";
 import type { CartLine } from "@shopify/hydrogen-react/storefront-api-types";
 
