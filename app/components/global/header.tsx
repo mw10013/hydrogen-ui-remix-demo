@@ -2,11 +2,12 @@ import { Link, useLocation } from "@remix-run/react";
 import clsx from "clsx";
 import { useWindowScroll } from "react-use";
 import { Heading } from "../elements/heading";
-import { IconBag } from "../elements/icon";
+import { IconBag, IconMenu } from "../elements/icon";
 import type { EnhancedMenu } from "../../root";
 import { useCart } from "@shopify/hydrogen-react";
 import { useDrawer } from "./drawer";
 import { CartDrawer } from "./cart-drawer";
+import { MenuDrawer } from "./menu-drawer";
 
 function CartBadge({ dark }: { dark: boolean }) {
   const { totalQuantity } = useCart();
@@ -30,11 +31,13 @@ function MobileHeader({
   title,
   isHome,
   openCart,
+  openMenu,
 }: 
 {
   title: string;
   isHome: boolean;
   openCart: () => void;
+  openMenu: () => void;
 }) {
   const { y } = useWindowScroll();
 
@@ -51,11 +54,11 @@ function MobileHeader({
 
   return (
     <header role="banner" className={styles.container}>
-      {/* <div className="flex items-center justify-start w-full gap-4">
+      <div className="flex items-center justify-start w-full gap-4">
               <button onClick={openMenu} className={styles.button}>
                 <IconMenu />
               </button>
-              <form
+              {/* <form
                 action={`/${countryCode ? countryCode + '/' : ''}search`}
                 className="items-center gap-2 sm:flex"
               >
@@ -73,8 +76,8 @@ function MobileHeader({
                   placeholder="Search"
                   name="q"
                 />
-              </form>
-            </div> */}
+              </form> */}
+            </div>
 
       <Link
         className="flex items-center self-stretch leading-[3rem] md:leading-[4rem] justify-center flex-grow w-full h-full"
@@ -184,30 +187,27 @@ export function Header({ title, menu }: { title: string; menu: EnhancedMenu }) {
     closeDrawer: closeCart,
   } = useDrawer();
 
-  // const {
-  //   isOpen: isMenuOpen,
-  //   openDrawer: openMenu,
-  //   closeDrawer: closeMenu,
-  // } = useDrawer();
+  const {
+    isOpen: isMenuOpen,
+    openDrawer: openMenu,
+    closeDrawer: closeMenu,
+  } = useDrawer();
 
   return (
     <>
       <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
-      {/* <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
-      <MenuDrawer isOpen={isMenuOpen} onClose={closeMenu} menu={menu!} /> */}
+      <MenuDrawer isOpen={isMenuOpen} onClose={closeMenu} menu={menu!} />
       <DesktopHeader
-        // countryCode={countryCode}
         isHome={isHome}
         title={title}
         menu={menu}
         openCart={openCart}
       />
       <MobileHeader
-        // countryCode={countryCode}
         isHome={isHome}
         title={title}
         openCart={openCart}
-        // openMenu={openMenu}
+        openMenu={openMenu}
       />
     </>
   );
