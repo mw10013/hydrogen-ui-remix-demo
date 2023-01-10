@@ -17,59 +17,65 @@ export function ProductForm() {
 
   const isOutOfStock = !selectedVariant?.availableForSale || false;
   const isOnSale =
-    selectedVariant?.priceV2?.amount <
-      selectedVariant?.compareAtPriceV2?.amount || false;
+    selectedVariant?.priceV2?.amount &&
+    selectedVariant?.compareAtPriceV2?.amount
+      ? selectedVariant?.priceV2?.amount <
+        selectedVariant?.compareAtPriceV2?.amount
+      : false;
 
   //   useEffect(() => {
   //     if (params || !search) return;
   //     setParams(new URLSearchParams(search));
   //   }, [params, search]);
 
-//   useEffect(() => {
-//     (options as OptionWithValues[]).map(({ name, values }) => {
-//       if (!params) return;
-//       const currentValue = params.get(name.toLowerCase()) || null;
-//       if (currentValue) {
-//         const matchedValue = values.filter(
-//           (value) => encodeURIComponent(value.toLowerCase()) === currentValue
-//         );
-//         setSelectedOption(name, matchedValue[0]);
-//       } else {
-//         params.set(
-//           encodeURIComponent(name.toLowerCase()),
-//           encodeURIComponent(selectedOptions![name]!.toLowerCase())
-//         ),
-//           window.history.replaceState(
-//             null,
-//             "",
-//             `${pathname}?${params.toString()}`
-//           );
-//       }
-//     });
-//   }, []);
+  //   useEffect(() => {
+  //     (options as OptionWithValues[]).map(({ name, values }) => {
+  //       if (!params) return;
+  //       const currentValue = params.get(name.toLowerCase()) || null;
+  //       if (currentValue) {
+  //         const matchedValue = values.filter(
+  //           (value) => encodeURIComponent(value.toLowerCase()) === currentValue
+  //         );
+  //         setSelectedOption(name, matchedValue[0]);
+  //       } else {
+  //         params.set(
+  //           encodeURIComponent(name.toLowerCase()),
+  //           encodeURIComponent(selectedOptions![name]!.toLowerCase())
+  //         ),
+  //           window.history.replaceState(
+  //             null,
+  //             "",
+  //             `${pathname}?${params.toString()}`
+  //           );
+  //       }
+  //     });
+  //   }, []);
 
-//   const handleChange = useCallback(
-//     (name: string, value: string) => {
-//       setSelectedOption(name, value);
-//       if (!params) return;
-//       params.set(
-//         encodeURIComponent(name.toLowerCase()),
-//         encodeURIComponent(value.toLowerCase())
-//       );
-//       if (isBrowser()) {
-//         window.history.replaceState(
-//           null,
-//           "",
-//           `${pathname}?${params.toString()}`
-//         );
-//       }
-//     },
-//     [setSelectedOption, params, pathname]
-//   );
+  //   const handleChange = useCallback(
+  //     (name: string, value: string) => {
+  //       setSelectedOption(name, value);
+  //       if (!params) return;
+  //       params.set(
+  //         encodeURIComponent(name.toLowerCase()),
+  //         encodeURIComponent(value.toLowerCase())
+  //       );
+  //       if (isBrowser()) {
+  //         window.history.replaceState(
+  //           null,
+  //           "",
+  //           `${pathname}?${params.toString()}`
+  //         );
+  //       }
+  //     },
+  //     [setSelectedOption, params, pathname]
+  //   );
 
-  const handleChange = useCallback((name: string, value: string) => {
-    setSelectedOption(name, value);
-  }, [setSelectedOption]);
+  const handleChange = useCallback(
+    (name: string, value: string) => {
+      setSelectedOption(name, value);
+    },
+    [setSelectedOption]
+  );
 
   return (
     <form className="grid gap-10">

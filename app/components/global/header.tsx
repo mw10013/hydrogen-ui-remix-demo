@@ -4,10 +4,10 @@ import { useWindowScroll } from "react-use";
 import { Heading } from "../elements/heading";
 import { IconBag } from "../elements/icon";
 import type { EnhancedMenu } from "../../root";
+import { useCart } from "@shopify/hydrogen-react";
 
 function CartBadge({ dark }: { dark: boolean }) {
-  // const {totalQuantity} = useCart();
-  const totalQuantity = 0;
+  const {totalQuantity} = useCart();
 
   if (totalQuantity < 1) {
     return null;
