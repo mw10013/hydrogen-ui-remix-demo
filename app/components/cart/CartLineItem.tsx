@@ -11,7 +11,6 @@ import { CartLineQuantityAdjustButton } from "./CartLineQuantityAdjustButton";
 
 export function CartLineItem() {
   const { linesRemove } = useCart();
-  // const { id: lineId, quantity, merchandise } = useCartLine();
   const cartLine = useCartLine();
   const { id: lineId, quantity, merchandise } = cartLine;
 
@@ -47,7 +46,7 @@ export function CartLineItem() {
             ))}
           </div>
 
-          {/* <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <div className="flex justify-start text-copy">
               <CartLineQuantityAdjust lineId={lineId} quantity={quantity} />
             </div>
@@ -59,11 +58,10 @@ export function CartLineItem() {
               <span className="sr-only">Remove</span>
               <IconRemove aria-hidden="true" />
             </button>
-          </div> */}
+          </div>
         </div>
         <Text>
-          {/* <CartLinePrice as="span" /> */}
-          {/* <CartLinePrice as="span" data={cartLine} /> */}
+          <CartLinePrice as="span" data={cartLine} />
         </Text>
       </div>
     </li>

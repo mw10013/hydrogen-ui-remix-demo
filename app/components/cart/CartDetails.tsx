@@ -55,7 +55,6 @@ export function CartDetails({
               <CartLineProvider key={line?.id} line={line as CartLine}>
                 <CartLineItem />
               </CartLineProvider>
-              // <pre key={line?.id}>{JSON.stringify(line, null, 2)}</pre>
             );
           })}
         </ul>
