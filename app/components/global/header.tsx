@@ -5,9 +5,11 @@ import { Heading } from "../elements/heading";
 import { IconBag } from "../elements/icon";
 import type { EnhancedMenu } from "../../root";
 import { useCart } from "@shopify/hydrogen-react";
+import { useDrawer } from "./drawer";
+import { CartDrawer } from "./cart-drawer";
 
 function CartBadge({ dark }: { dark: boolean }) {
-  const {totalQuantity} = useCart();
+  const { totalQuantity } = useCart();
 
   if (totalQuantity < 1) {
     return null;
@@ -99,10 +101,12 @@ function DesktopHeader({
   title,
   isHome = true,
   menu,
+  openCart,
 }: {
   title: string;
   isHome?: boolean;
   menu: EnhancedMenu;
+  openCart: () => void;
 }) {
   const { y } = useWindowScroll();
 
@@ -157,8 +161,7 @@ function DesktopHeader({
         <Link to={'/account'} className={styles.button}>
           <IconAccount />
         </Link> */}
-        {/* <button onClick={openCart} className={styles.button}> */}
-        <button className={styles.button}>
+        <button onClick={openCart} className={styles.button}>
           <IconBag />
           <CartBadge dark={isHome} />
         </button>
@@ -174,11 +177,11 @@ export function Header({ title, menu }: { title: string; menu: EnhancedMenu }) {
   const countryCode = localeMatch ? localeMatch[1] : null;
   const isHome = pathname === `/${countryCode ? countryCode + "/" : ""}`;
 
-  // const {
-  //   isOpen: isCartOpen,
-  //   openDrawer: openCart,
-  //   closeDrawer: closeCart,
-  // } = useDrawer();
+  const {
+    isOpen: isCartOpen,
+    openDrawer: openCart,
+    closeDrawer: closeCart,
+  } = useDrawer();
 
   // const {
   //   isOpen: isMenuOpen,
@@ -188,6 +191,7 @@ export function Header({ title, menu }: { title: string; menu: EnhancedMenu }) {
 
   return (
     <>
+      <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
       {/* <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
       <MenuDrawer isOpen={isMenuOpen} onClose={closeMenu} menu={menu!} /> */}
       <DesktopHeader
@@ -195,13 +199,13 @@ export function Header({ title, menu }: { title: string; menu: EnhancedMenu }) {
         isHome={isHome}
         title={title}
         menu={menu}
-        // openCart={openCart}
+        openCart={openCart}
       />
       <MobileHeader
         // countryCode={countryCode}
         isHome={isHome}
         title={title}
-        // openCart={openCart}
+        openCart={openCart}
         // openMenu={openMenu}
       />
     </>
