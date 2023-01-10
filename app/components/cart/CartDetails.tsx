@@ -1,12 +1,13 @@
 import { useRef } from "react";
 import { useScroll } from "react-use";
 import { useCart, Money } from "@shopify/hydrogen-react";
-
 import { Text } from "~/components/elements/text";
-import { CartEmpty } from "./cart-empty";
-import { CartLineItem } from "./cart-line-item";
+import { CartEmpty } from "./CartEmpty";
+import { CartLineItem } from "./CartLineItem";
 import { Link } from "@remix-run/react";
 import { Button } from "../elements/button";
+import { CartLineProvider } from "./CartLineProvider";
+import type { CartLine } from "@shopify/hydrogen-react/storefront-api-types";
 
 export function CartDetails({
   layout,
@@ -51,10 +52,10 @@ export function CartDetails({
         <ul className="grid gap-6 md:gap-10">
           {lines?.map((line) => {
             return (
-              //   <CartLineProvider key={line?.id} line={line}>
-              //     <CartLineItem />
-              //   </CartLineProvider>
-              <pre key={line?.id}>{JSON.stringify(line, null, 2)}</pre>
+              <CartLineProvider key={line?.id} line={line as CartLine}>
+                <CartLineItem />
+              </CartLineProvider>
+              // <pre key={line?.id}>{JSON.stringify(line, null, 2)}</pre>
             );
           })}
         </ul>

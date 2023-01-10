@@ -1,4 +1,4 @@
-import { CartDetails } from '../cart/cart-details';
+import { CartDetails } from '../cart/CartDetails';
 import { Drawer } from './drawer';
 
 export function CartDrawer({
