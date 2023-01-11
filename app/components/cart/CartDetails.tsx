@@ -77,11 +77,11 @@ function CartCheckoutActions() {
       <div className="grid gap-4">
         {checkoutUrl ? (
           //   <Link to={checkoutUrl} prefetch={false} target="_self">
-          <Link to={checkoutUrl} target="_self">
+          <a href={checkoutUrl}>
             <Button as="span" width="full">
               Continue to Checkout
             </Button>
-          </Link>
+          </a>
         ) : null}
         {/* <CartShopPayButton /> */}
       </div>

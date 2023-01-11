@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useScroll } from "react-use";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
-import { Text } from "~/components/elements/text";
+import { Text } from "~/components/elements/Text";
 import { Button } from "../elements/Button";
 import { Heading } from "../elements/Heading";
 import { Skeleton } from "../elements/Skeleton";

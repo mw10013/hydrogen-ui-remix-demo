@@ -1,7 +1,7 @@
 import { Link } from "@remix-run/react";
 import { useCart, Image } from "@shopify/hydrogen-react";
 import type { Image as ImageType } from "@shopify/hydrogen-react/storefront-api-types";
-import { Text } from "~/components/elements/text";
+import { Text } from "~/components/elements/Text";
 import { Heading } from "../elements/Heading";
 import { IconRemove } from "../elements/Icon";
 import { CartLinePrice } from "./CartLinePrice";

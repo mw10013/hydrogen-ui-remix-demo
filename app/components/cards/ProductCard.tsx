@@ -13,7 +13,7 @@ import type {
   ProductVariant,
 } from "@shopify/hydrogen-react/storefront-api-types";
 import { Link } from "@remix-run/react";
-import { Text } from "~/components/elements/text";
+import { Text } from "~/components/elements/Text";
 
 export function ProductCard({
   product,

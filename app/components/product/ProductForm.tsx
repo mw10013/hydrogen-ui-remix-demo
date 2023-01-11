@@ -5,7 +5,7 @@ import { useProduct } from "@shopify/hydrogen-react";
 import { AddToCartButton, Money, ShopPayButton } from "@shopify/hydrogen-react";
 import { Heading } from "../elements/Heading";
 import { Button } from "../elements/Button";
-import { Text } from "~/components/elements/text";
+import { Text } from "~/components/elements/Text";
 import { ProductOptions } from "./ProductOptions";
 
 export function ProductForm() {

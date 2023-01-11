@@ -1,8 +1,8 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
-import { Section } from "~/components/elements/section";
-import { PageHeader } from "~/components/global/page-header";
+import { Section } from "~/components/elements/Section";
+import { PageHeader } from "~/components/global/PageHeader";
 import { shopClient } from "~/lib/utils";
 import { request as graphqlRequest } from "graphql-request";
 import { graphql } from "~/lib/gql/gql";
