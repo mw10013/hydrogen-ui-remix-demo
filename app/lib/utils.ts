@@ -1,5 +1,8 @@
 import { createStorefrontClient } from "@shopify/hydrogen-react";
-import type { MoneyV2, UserError } from "@shopify/hydrogen-react/storefront-api-types";
+import type {
+  MoneyV2,
+  UserError,
+} from "@shopify/hydrogen-react/storefront-api-types";
 
 // @ts-expect-error types not available
 import typographicBase from "typographic-base";
@@ -11,6 +14,7 @@ export function classNames(
 }
 
 export const shopClient = createStorefrontClient({
+  // getShopifyDomain() and getStorefrontApirul() will append ".myshopify.com" to storeDomain.
   storeDomain: "hydrogen-preview",
   // TODO: convert to 'privateStorefrontToken'!
   publicStorefrontToken: "3b580e70970c4528da70c98e097c2fa0",

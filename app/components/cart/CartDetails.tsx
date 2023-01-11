@@ -4,10 +4,10 @@ import { useCart, Money } from "@shopify/hydrogen-react";
 import { Text } from "~/components/elements/Text";
 import { CartEmpty } from "./CartEmpty";
 import { CartLineItem } from "./CartLineItem";
-import { Link } from "@remix-run/react";
 import { Button } from "../elements/Button";
 import { CartLineProvider } from "./CartLineProvider";
 import type { CartLine } from "@shopify/hydrogen-react/storefront-api-types";
+import { CartShopPayButton } from "./CartShopPayButton";
 
 export function CartDetails({
   layout,
@@ -83,7 +83,7 @@ function CartCheckoutActions() {
             </Button>
           </a>
         ) : null}
-        {/* <CartShopPayButton /> */}
+        <CartShopPayButton />
       </div>
     </>
   );
