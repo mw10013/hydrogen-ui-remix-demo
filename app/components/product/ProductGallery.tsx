@@ -1,7 +1,6 @@
-import { MediaFile, Image } from "@shopify/hydrogen-react";
+import { MediaFile } from "@shopify/hydrogen-react";
 import type { MediaEdge } from "@shopify/hydrogen-react/storefront-api-types";
 import invariant from "tiny-invariant";
-import { ATTR_LOADING_EAGER } from "~/lib/const";
 
 export function ProductGallery({
   media,
@@ -13,21 +12,12 @@ export function ProductGallery({
   if (!media.length) {
     return null;
   }
-  const data = media[0];
-  invariant(data.__typename === "MediaImage", "Invalid media image");
-  invariant(data.image, "Invalid image");
-
   return (
-    <>
-      {/* <div className="">
-        <Image data={data.image} />
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      </div> */}
       <div
         className={`swimlane md:grid-flow-row hiddenScroll md:p-0 md:overflow-x-auto md:grid-cols-2 ${className}`}
       >
         {media.map((med, i) => {
-          let mediaProps: Record<string, any> = {};
+          // let mediaProps: Record<string, any> = {};
           const isFirst = i === 0;
           const isFourth = i === 3;
           const isFullWidth = i % 3 === 0;
@@ -41,40 +31,40 @@ export function ProductGallery({
             },
           };
 
-          switch (med.mediaContentType) {
-            case "IMAGE":
-              mediaProps = {
-                width: 800,
-                widths: [400, 800, 1200, 1600, 2000, 2400],
-              };
-              break;
-            case "VIDEO":
-              mediaProps = {
-                width: "100%",
-                autoPlay: true,
-                controls: false,
-                muted: true,
-                loop: true,
-                preload: "auto",
-              };
-              break;
-            case "EXTERNAL_VIDEO":
-              mediaProps = { width: "100%" };
-              break;
-            case "MODEL_3D":
-              mediaProps = {
-                width: "100%",
-                interactionPromptThreshold: "0",
-                ar: true,
-                loading: ATTR_LOADING_EAGER,
-                disableZoom: true,
-              };
-              break;
-          }
+          // switch (med.mediaContentType) {
+          //   case "IMAGE":
+          //     mediaProps = {
+          //       width: 800,
+          //       widths: [400, 800, 1200, 1600, 2000, 2400],
+          //     };
+          //     break;
+          //   case "VIDEO":
+          //     mediaProps = {
+          //       width: "100%",
+          //       autoPlay: true,
+          //       controls: false,
+          //       muted: true,
+          //       loop: true,
+          //       preload: "auto",
+          //     };
+          //     break;
+          //   case "EXTERNAL_VIDEO":
+          //     mediaProps = { width: "100%" };
+          //     break;
+          //   case "MODEL_3D":
+          //     mediaProps = {
+          //       width: "100%",
+          //       interactionPromptThreshold: "0",
+          //       ar: true,
+          //       loading: ATTR_LOADING_EAGER,
+          //       disableZoom: true,
+          //     };
+          //     break;
+          // }
 
-          if (i === 0 && med.mediaContentType === "IMAGE") {
-            mediaProps.loading = ATTR_LOADING_EAGER;
-          }
+          // if (i === 0 && med.mediaContentType === "IMAGE") {
+          //   mediaProps.loading = ATTR_LOADING_EAGER;
+          // }
 
           const style = [
             isFullWidth ? "md:col-span-2" : "md:col-span-1",
@@ -89,21 +79,22 @@ export function ProductGallery({
               key={med.id || med.image.id}
             >
               <MediaFile
-                tabIndex="0"
+                tabIndex={0}
                 className={`w-full h-full aspect-square fadeIn object-cover`}
                 data={data}
-                sizes={
-                  isFullWidth
-                    ? "(min-width: 64em) 60vw, (min-width: 48em) 50vw, 90vw"
-                    : "(min-width: 64em) 30vw, (min-width: 48em) 25vw, 90vw"
-                }
-                {...mediaProps}
+                // {...mediaProps}
                 mediaOptions={{
                   image: {
                     loaderOptions: {
                       crop: "center",
                       scale: 2,
                     },
+                    width: 800,
+                    widths: [400, 800, 1200, 1600, 2000, 2400],
+                    sizes: isFullWidth
+                      ? "(min-width: 64em) 60vw, (min-width: 48em) 50vw, 90vw"
+                      : "(min-width: 64em) 30vw, (min-width: 48em) 25vw, 90vw",
+                    loading: i === 0 ? "eager" : undefined,
                   },
                 }}
               />
@@ -111,6 +102,5 @@ export function ProductGallery({
           );
         })}
       </div>
-    </>
   );
 }
