@@ -2,6 +2,7 @@ import { graphql } from "./gql";
 
 export const MediaFragment = graphql(`
   fragment MediaFragment on Media {
+    __typename
     mediaContentType
     alt
     previewImage {
