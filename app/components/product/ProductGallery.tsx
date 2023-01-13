@@ -1,6 +1,5 @@
 import { MediaFile } from "@shopify/hydrogen-react";
 import type { MediaEdge } from "@shopify/hydrogen-react/storefront-api-types";
-import invariant from "tiny-invariant";
 
 export function ProductGallery({
   media,

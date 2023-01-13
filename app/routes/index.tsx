@@ -7,6 +7,7 @@ import { shopClient } from "~/lib/utils";
 import { Hero } from "~/components/sections/Hero";
 import { ProductSwimlane } from "~/components/sections/ProductSwimlane";
 import { FeaturedCollections } from "~/components/sections/FeaturedCollections";
+import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
 
 const query = graphql(`
   query homepage {
@@ -87,9 +88,9 @@ export default function Index() {
     <>
       <Hero {...(primaryHero as any)} height="full" top loading="eager" />
       <ProductSwimlane
-        data={data.featuredProducts.nodes}
+        products={data.featuredProducts.nodes as Product[]}
         title="Featured Products"
-        divider="bottom"
+        // divider="bottom"
       />
       <Hero {...(secondaryHero as any)} />
       <FeaturedCollections

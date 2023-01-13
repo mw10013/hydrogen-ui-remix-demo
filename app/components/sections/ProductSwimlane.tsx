@@ -2,41 +2,30 @@ import { useMemo } from "react";
 import type { Product } from "@shopify/hydrogen-react/storefront-api-types";
 import { Section } from "../elements/Section";
 import { ProductCard } from "../cards/ProductCard";
-
-const mockProducts = new Array(12).fill("");
+import { graphql } from "~/lib/gql";
+import request from "graphql-request";
+import { shopClient } from "~/lib/utils";
 
 export function ProductSwimlane({
   title = "Featured Products",
-  data = mockProducts,
+  products,
   count = 12,
   ...props
+}: {
+  title: string;
+  products: Product[];
+  count?: number;
 }) {
-  const productCardsMarkup = useMemo(() => {
-    // If the data is already provided, there's no need to query it, so we'll just return the data
-    if (typeof data === "object") {
-      return <ProductCards products={data} />;
-    }
-
-    // // If the data provided is a productId, we will query the productRecommendations API.
-    // // To make sure we have enough products for the swimlane, we'll combine the results with our top selling products.
-    // if (typeof data === 'string') {
-    //   return (
-    //     <Suspense>
-    //       <RecommendedProducts productId={data} count={count} />
-    //     </Suspense>
-    //   );
-    // }
-
-    // // If no data is provided, we'll go and query the top products
-    // return <TopProducts count={count} />;
-    return null;
-    //   }, [count, data]);
-  }, [data]);
-
   return (
     <Section heading={title} padding="y" {...props}>
       <div className="swimlane hiddenScroll md:pb-8 md:scroll-px-8 lg:scroll-px-12 md:px-8 lg:px-12">
-        {productCardsMarkup}
+        {products.map((product) => (
+          <ProductCard
+            product={product}
+            key={product.id}
+            className={"snap-start w-80"}
+          />
+        ))}
       </div>
     </Section>
   );
@@ -110,36 +99,55 @@ function ProductCards({ products }: { products: Product[] }) {
 //   return <ProductCards products={products.nodes} />;
 // }
 
-// const RECOMMENDED_PRODUCTS_QUERY = gql`
-//   ${PRODUCT_CARD_FRAGMENT}
-//   query productRecommendations(
-//     $productId: ID!
-//     $count: Int
-//     $countryCode: CountryCode
-//     $languageCode: LanguageCode
-//   ) @inContext(country: $countryCode, language: $languageCode) {
-//     recommended: productRecommendations(productId: $productId) {
-//       ...ProductCard
-//     }
-//     additional: products(first: $count, sortKey: BEST_SELLING) {
-//       nodes {
-//         ...ProductCard
-//       }
-//     }
-//   }
-// `;
+export const recommendedProductsQuery = graphql(`
+  query productRecommendations($productId: ID!, $count: Int) {
+    recommended: productRecommendations(productId: $productId) {
+      ...ProductCardFragment
+    }
+    additional: products(first: $count, sortKey: BEST_SELLING) {
+      nodes {
+        ...ProductCardFragment
+      }
+    }
+  }
+`);
 
-// const TOP_PRODUCTS_QUERY = gql`
-//   ${PRODUCT_CARD_FRAGMENT}
-//   query topProducts(
-//     $count: Int
-//     $countryCode: CountryCode
-//     $languageCode: LanguageCode
-//   ) @inContext(country: $countryCode, language: $languageCode) {
-//     products(first: $count, sortKey: BEST_SELLING) {
-//       nodes {
-//         ...ProductCard
-//       }
-//     }
-//   }
-// `;
+export async function getRecommendedProductsData({
+  productId,
+  count,
+}: {
+  productId: string;
+  count: number;
+}) {
+  const { recommended, additional } = await request({
+    url: shopClient.getStorefrontApiUrl(),
+    document: recommendedProductsQuery,
+    requestHeaders: shopClient.getPublicTokenHeaders(),
+    variables: {
+      productId,
+      count,
+    },
+  });
+
+  const merged = recommended
+    ?.concat(additional.nodes)
+    .filter(
+      (value, index, array) =>
+        array.findIndex((value2) => value2.id === value.id) === index
+    );
+  const productIndex = merged?.map((item) => item.id).indexOf(productId);
+  if (productIndex && productIndex !== -1) {
+    merged?.splice(productIndex, 1);
+  }
+  return merged ?? [];
+}
+
+export const topProductsQuery = graphql(`
+  query topProducts($count: Int) {
+    products(first: $count, sortKey: BEST_SELLING) {
+      nodes {
+        ...ProductCardFragment
+      }
+    }
+  }
+`);

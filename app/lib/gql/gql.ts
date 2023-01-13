@@ -13,6 +13,8 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
+    "\n  query productRecommendations($productId: ID!, $count: Int) {\n    recommended: productRecommendations(productId: $productId) {\n      ...ProductCardFragment\n    }\n    additional: products(first: $count, sortKey: BEST_SELLING) {\n      nodes {\n        ...ProductCardFragment\n      }\n    }\n  }\n": types.ProductRecommendationsDocument,
+    "\n  query topProducts($count: Int) {\n    products(first: $count, sortKey: BEST_SELLING) {\n      nodes {\n        ...ProductCardFragment\n      }\n    }\n  }\n": types.TopProductsDocument,
     "\n  fragment MediaFragment on Media {\n    __typename\n    mediaContentType\n    alt\n    previewImage {\n      url\n    }\n    ... on MediaImage {\n      id\n      image {\n        url\n        width\n        height\n      }\n    }\n    ... on Video {\n      id\n      sources {\n        mimeType\n        url\n      }\n    }\n    ... on Model3d {\n      id\n      sources {\n        mimeType\n        url\n      }\n    }\n    ... on ExternalVideo {\n      id\n      embedUrl\n      host\n    }\n  }\n": types.MediaFragmentFragmentDoc,
     "\n  fragment ProductCardFragment on Product {\n    id\n    title\n    publishedAt\n    handle\n    variants(first: 1) {\n      nodes {\n        id\n        image {\n          url\n          altText\n          width\n          height\n        }\n        priceV2 {\n          amount\n          currencyCode\n        }\n        compareAtPriceV2 {\n          amount\n          currencyCode\n        }\n      }\n    }\n  }\n": types.ProductCardFragmentFragmentDoc,
     "\n  fragment MenuFragment on Menu {\n    id\n    items {\n      ...MenuItemFragment\n      items {\n        ...MenuItemFragment\n      }\n    }\n  }\n": types.MenuFragmentFragmentDoc,
@@ -24,6 +26,14 @@ const documents = {
     "\n  query ProductsPage($pageBy: Int!, $cursor: String) {\n    products(first: $pageBy, after: $cursor) {\n      nodes {\n        ...ProductCardFragment\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n    }\n  }\n": types.ProductsPageDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query productRecommendations($productId: ID!, $count: Int) {\n    recommended: productRecommendations(productId: $productId) {\n      ...ProductCardFragment\n    }\n    additional: products(first: $count, sortKey: BEST_SELLING) {\n      nodes {\n        ...ProductCardFragment\n      }\n    }\n  }\n"): (typeof documents)["\n  query productRecommendations($productId: ID!, $count: Int) {\n    recommended: productRecommendations(productId: $productId) {\n      ...ProductCardFragment\n    }\n    additional: products(first: $count, sortKey: BEST_SELLING) {\n      nodes {\n        ...ProductCardFragment\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query topProducts($count: Int) {\n    products(first: $count, sortKey: BEST_SELLING) {\n      nodes {\n        ...ProductCardFragment\n      }\n    }\n  }\n"): (typeof documents)["\n  query topProducts($count: Int) {\n    products(first: $count, sortKey: BEST_SELLING) {\n      nodes {\n        ...ProductCardFragment\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
