@@ -1,5 +1,8 @@
+/* We  */
+/* Tailwind Configuration Docs: https://tailwindcss.com/docs/configuration */
+
 function withOpacityValue(variable) {
-  return ({ opacityValue }) => {
+  return ({opacityValue}) => {
     if (opacityValue === undefined) {
       return `rgb(var(${variable}))`;
     }
@@ -7,9 +10,8 @@ function withOpacityValue(variable) {
   };
 }
 
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.{ts,tsx,jsx,js}"],
+  content: ['./app/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -66,5 +68,6 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+  // eslint-disable-next-line node/no-unpublished-require
+  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 };
