@@ -11,22 +11,7 @@ import { useLoaderData } from "@remix-run/react";
 import { ProductGrid } from "~/components/product/ProductGrid";
 
 const query = graphql(`
-  query AllProducts($pageBy: Int!, $cursor: String) {
-    products(first: $pageBy, after: $cursor) {
-      nodes {
-        ...ProductCardFragment
-      }
-      pageInfo {
-        hasNextPage
-        startCursor
-        endCursor
-      }
-    }
-  }
-`);
-
-const pageQuery = graphql(`
-  query ProductsPage($pageBy: Int!, $cursor: String) {
+  query Products($pageBy: Int!, $cursor: String) {
     products(first: $pageBy, after: $cursor) {
       nodes {
         ...ProductCardFragment
@@ -40,24 +25,15 @@ const pageQuery = graphql(`
 `);
 
 export const loader = (async ({ params: { cursor } }) => {
-  const data = cursor
-    ? await graphqlRequest({
-        url: shopClient.getStorefrontApiUrl(),
-        document: pageQuery,
-        requestHeaders: shopClient.getPublicTokenHeaders(),
-        variables: {
-          pageBy: PAGINATION_SIZE,
-          cursor,
-        },
-      })
-    : await graphqlRequest({
-        url: shopClient.getStorefrontApiUrl(),
-        document: query,
-        requestHeaders: shopClient.getPublicTokenHeaders(),
-        variables: {
-          pageBy: PAGINATION_SIZE,
-        },
-      });
+  const data = await graphqlRequest({
+    url: shopClient.getStorefrontApiUrl(),
+    document: query,
+    requestHeaders: shopClient.getPublicTokenHeaders(),
+    variables: {
+      pageBy: PAGINATION_SIZE,
+      cursor,
+    },
+  });
   return json({
     data,
   });
@@ -75,7 +51,7 @@ export default function AllProducts() {
           key="products"
           // url={`/products`}
           collection={{ products } as Collection}
-        />  
+        />
       </Section>
     </>
   );
