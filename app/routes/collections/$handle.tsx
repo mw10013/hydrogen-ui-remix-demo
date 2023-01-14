@@ -1,9 +1,51 @@
-import { graphql } from "~/lib/gql";
+import type { LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import invariant from "tiny-invariant";
+import { shopClient } from "~/lib/utils";
+import { request } from "graphql-request";
+import { NotFound } from "~/components/global/NotFound";
+import { PageHeader } from "~/components/global/PageHeader";
+import { Section } from "~/components/elements/Section";
+import { ProductGrid } from "~/components/product/ProductGrid";
+import { Text } from "~/components/elements/Text";
+import { graphql } from "~/lib/gql/gql";
+import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
 
-const pageBy = 48;
+const PAGE_BY = 48;
+
+// const query = graphql(`
+//   query CollectionDetails($handle: String!, $pageBy: Int!, $cursor: String) {
+//     collection(handle: $handle) {
+//       id
+//       title
+//       description
+//       seo {
+//         description
+//         title
+//       }
+//       image {
+//         id
+//         url
+//         width
+//         height
+//         altText
+//       }
+//       products(first: $pageBy, after: $cursor) {
+//         nodes {
+//           ...ProductCardFragment
+//         }
+//         pageInfo {
+//           hasNextPage
+//           endCursor
+//         }
+//       }
+//     }
+//   }
+// `);
 
 const query = graphql(`
-  query CollectionDetails($handle: String!, $pageBy: Int!, $cursor: String) {
+  query CollectionPage($handle: String!, $pageBy: Int!, $cursor: String) {
     collection(handle: $handle) {
       id
       title
@@ -32,60 +74,33 @@ const query = graphql(`
   }
 `);
 
-const pageQuery = graphql(`
-  query CollectionPage($handle: String!, $pageBy: Int!, $cursor: String) {
-    collection(handle: $handle) {
-      products(first: $pageBy, after: $cursor) {
-        nodes {
-          ...ProductCardFragment
-        }
-        pageInfo {
-          hasNextPage
-          endCursor
-        }
-      }
-    }
-  }
-`);
-
-export default function Collection({ params }: HydrogenRouteProps) {
-  const { handle } = params;
-  const {
-    language: { isoCode: language },
-    country: { isoCode: country },
-  } = useLocalization();
-
-  const {
-    data: { collection },
-  } = useShopQuery({
-    query: COLLECTION_QUERY,
+export const loader = (async ({ params: { handle, cursor } }) => {
+  invariant(handle, "Missing handle");
+  const data = await request({
+    url: shopClient.getStorefrontApiUrl(),
+    document: query,
+    requestHeaders: shopClient.getPublicTokenHeaders(),
     variables: {
       handle,
-      language,
-      country,
-      pageBy,
+      pageBy: PAGE_BY,
+      cursor,
     },
-    preload: true,
   });
+  return json({
+    data,
+  });
+}) satisfies LoaderFunction;
+
+export default function CollectionRoute() {
+  const { data } = useLoaderData<typeof loader>();
+  const collection = data.collection;
 
   if (!collection) {
     return <NotFound type="collection" />;
   }
 
-  useServerAnalytics({
-    shopify: {
-      canonicalPath: `/collections/${handle}`,
-      pageType: ShopifyAnalyticsConstants.pageType.collection,
-      resourceId: collection.id,
-      collectionHandle: handle,
-    },
-  });
-
   return (
-    <Layout>
-      <Suspense>
-        <Seo type="collection" data={collection} />
-      </Suspense>
+    <>
       <PageHeader heading={collection.title}>
         {collection?.description && (
           <div className="flex items-baseline justify-between w-full">
@@ -100,39 +115,39 @@ export default function Collection({ params }: HydrogenRouteProps) {
       <Section>
         <ProductGrid
           key={collection.id}
-          collection={collection}
-          url={`/collections/${handle}?country=${country}`}
+          collection={collection as Collection}
+          //   url={`/collections/${handle}`}
         />
       </Section>
-    </Layout>
+    </>
   );
 }
 
 // API endpoint that returns paginated products for this collection
 // @see templates/demo-store/src/components/product/ProductGrid.client.tsx
-export async function api(
-  request: HydrogenRequest,
-  { params, queryShop }: HydrogenApiRouteOptions
-) {
-  if (request.method !== "POST") {
-    return new Response("Method not allowed", {
-      status: 405,
-      headers: { Allow: "POST" },
-    });
-  }
-  const url = new URL(request.url);
+// export async function api(
+//   request: HydrogenRequest,
+//   { params, queryShop }: HydrogenApiRouteOptions
+// ) {
+//   if (request.method !== "POST") {
+//     return new Response("Method not allowed", {
+//       status: 405,
+//       headers: { Allow: "POST" },
+//     });
+//   }
+//   const url = new URL(request.url);
 
-  const cursor = url.searchParams.get("cursor");
-  const country = url.searchParams.get("country");
-  const { handle } = params;
+//   const cursor = url.searchParams.get("cursor");
+//   const country = url.searchParams.get("country");
+//   const { handle } = params;
 
-  return await queryShop({
-    query: PAGINATE_COLLECTION_QUERY,
-    variables: {
-      handle,
-      cursor,
-      pageBy,
-      country,
-    },
-  });
-}
+//   return await queryShop({
+//     query: PAGINATE_COLLECTION_QUERY,
+//     variables: {
+//       handle,
+//       cursor,
+//       pageBy,
+//       country,
+//     },
+//   });
+// }
