@@ -24,7 +24,7 @@ const query = graphql(`
   }
 `);
 
-export const loader = (async ({ params: { cursor } }) => {
+export const loader = (async ({ params: { cursor = undefined } }) => {
   const data = await request({
     url: shopClient.getStorefrontApiUrl(),
     document: query,
@@ -39,7 +39,7 @@ export const loader = (async ({ params: { cursor } }) => {
   });
 }) satisfies LoaderFunction;
 
-export default function AllProducts() {
+export default function ProductsRoute() {
   const {
     data: { products },
   } = useLoaderData<typeof loader>();

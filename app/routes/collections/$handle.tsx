@@ -14,36 +14,6 @@ import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
 
 const PAGE_BY = 48;
 
-// const query = graphql(`
-//   query CollectionDetails($handle: String!, $pageBy: Int!, $cursor: String) {
-//     collection(handle: $handle) {
-//       id
-//       title
-//       description
-//       seo {
-//         description
-//         title
-//       }
-//       image {
-//         id
-//         url
-//         width
-//         height
-//         altText
-//       }
-//       products(first: $pageBy, after: $cursor) {
-//         nodes {
-//           ...ProductCardFragment
-//         }
-//         pageInfo {
-//           hasNextPage
-//           endCursor
-//         }
-//       }
-//     }
-//   }
-// `);
-
 const query = graphql(`
   query CollectionPage($handle: String!, $pageBy: Int!, $cursor: String) {
     collection(handle: $handle) {
@@ -74,7 +44,7 @@ const query = graphql(`
   }
 `);
 
-export const loader = (async ({ params: { handle, cursor } }) => {
+export const loader = (async ({ params: { handle, cursor = undefined } }) => {
   invariant(handle, "Missing handle");
   const data = await request({
     url: shopClient.getStorefrontApiUrl(),
@@ -122,32 +92,3 @@ export default function CollectionRoute() {
     </>
   );
 }
-
-// API endpoint that returns paginated products for this collection
-// @see templates/demo-store/src/components/product/ProductGrid.client.tsx
-// export async function api(
-//   request: HydrogenRequest,
-//   { params, queryShop }: HydrogenApiRouteOptions
-// ) {
-//   if (request.method !== "POST") {
-//     return new Response("Method not allowed", {
-//       status: 405,
-//       headers: { Allow: "POST" },
-//     });
-//   }
-//   const url = new URL(request.url);
-
-//   const cursor = url.searchParams.get("cursor");
-//   const country = url.searchParams.get("country");
-//   const { handle } = params;
-
-//   return await queryShop({
-//     query: PAGINATE_COLLECTION_QUERY,
-//     variables: {
-//       handle,
-//       cursor,
-//       pageBy,
-//       country,
-//     },
-//   });
-// }
