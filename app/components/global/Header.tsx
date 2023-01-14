@@ -2,12 +2,13 @@ import { Link, useLocation } from "@remix-run/react";
 import clsx from "clsx";
 import { useWindowScroll } from "react-use";
 import { Heading } from "../elements/Heading";
-import { IconBag, IconMenu } from "../elements/Icon";
+import { IconAccount, IconBag, IconMenu, IconSearch } from "../elements/Icon";
 import type { EnhancedMenu } from "../../root";
 import { useCart } from "@shopify/hydrogen-react";
 import { useDrawer } from "./Drawer";
 import { CartDrawer } from "./CartDrawer";
 import { MenuDrawer } from "./MenuDrawer";
+import { Input } from "../elements/Input";
 
 function CartBadge({ dark }: { dark: boolean }) {
   const { totalQuantity } = useCart();
@@ -57,25 +58,26 @@ function MobileHeader({
         <button onClick={openMenu} className={styles.button}>
           <IconMenu />
         </button>
-        {/* <form
-                action={`/${countryCode ? countryCode + '/' : ''}search`}
-                className="items-center gap-2 sm:flex"
-              >
-                <button type="submit" className={styles.button}>
-                  <IconSearch />
-                </button>
-                <Input
-                  className={
-                    isHome
-                      ? 'focus:border-contrast/20 dark:focus:border-primary/20'
-                      : 'focus:border-primary/20'
-                  }
-                  type="search"
-                  variant="minisearch"
-                  placeholder="Search"
-                  name="q"
-                />
-              </form> */}
+        <form
+          // action={`/${countryCode ? countryCode + '/' : ''}search`}
+          action="/search"
+          className="items-center gap-2 sm:flex"
+        >
+          <button type="submit" className={styles.button}>
+            <IconSearch />
+          </button>
+          <Input
+            className={
+              isHome
+                ? "focus:border-contrast/20 dark:focus:border-primary/20"
+                : "focus:border-primary/20"
+            }
+            type="search"
+            variant="minisearch"
+            placeholder="Search"
+            name="q"
+          />
+        </form>
       </div>
 
       <Link
@@ -142,15 +144,16 @@ function DesktopHeader({
         </nav>
       </div>
       <div className="flex items-center gap-1">
-        {/* <form
-          action={`/${countryCode ? countryCode + '/' : ''}search`}
+        <form
+          // action={`/${countryCode ? countryCode + '/' : ''}search`}
+          action="/search"
           className="flex items-center gap-2"
         >
           <Input
             className={
               isHome
-                ? 'focus:border-contrast/20 dark:focus:border-primary/20'
-                : 'focus:border-primary/20'
+                ? "focus:border-contrast/20 dark:focus:border-primary/20"
+                : "focus:border-primary/20"
             }
             type="search"
             variant="minisearch"
@@ -161,9 +164,9 @@ function DesktopHeader({
             <IconSearch />
           </button>
         </form>
-        <Link to={'/account'} className={styles.button}>
+        <Link to={"/account"} className={styles.button}>
           <IconAccount />
-        </Link> */}
+        </Link>
         <button onClick={openCart} className={styles.button}>
           <IconBag />
           <CartBadge dark={isHome} />
