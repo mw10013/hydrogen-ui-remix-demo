@@ -48,9 +48,8 @@ export default function ProductsRoute() {
       <PageHeader heading="All Products" variant="allCollections" />
       <Section>
         <ProductGrid
-          key="products"
-          // url={`/products`}
           collection={{ products } as Collection}
+          href={`/products?index`}
         />
       </Section>
     </>

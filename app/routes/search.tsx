@@ -11,7 +11,7 @@ import { ProductGrid } from "~/components/product/ProductGrid";
 import { Text } from "~/components/elements/Text";
 import { NoResultRecommendations } from "~/components/search/NoResultRecommendations";
 import { SearchPage } from "~/components/search/SearchPage";
-import { SearchQuery } from "~/lib/gql/graphql";
+import type { SearchQuery } from "~/lib/gql/graphql";
 
 const query = graphql(`
   query Search($searchTerm: String, $pageBy: Int!, $cursor: String) {
@@ -31,31 +31,6 @@ const query = graphql(`
     }
   }
 `);
-
-// const PAGINATE_SEARCH_QUERY = gql`
-//   query ProductsPage(
-//     $searchTerm: String
-//     $pageBy: Int!
-//     $cursor: String
-//     $country: CountryCode
-//     $language: LanguageCode
-//   ) @inContext(country: $country, language: $language) {
-//     products(
-//       sortKey: RELEVANCE
-//       query: $searchTerm
-//       first: $pageBy
-//       after: $cursor
-//     ) {
-//       nodes {
-//         ...ProductCardFragment
-//       }
-//       pageInfo {
-//         hasNextPage
-//         endCursor
-//       }
-//     }
-//   }
-// `;
 
 interface Data {
   data?: SearchQuery;
@@ -89,7 +64,7 @@ export const loader = (async ({ request }) => {
 }) satisfies LoaderFunction;
 
 export default function Search() {
-  const { data, searchTerm, cursor } = useLoaderData<typeof loader>();
+  const { data, searchTerm } = useLoaderData<typeof loader>();
 
   if (!data) {
     return <SearchPage searchTerm={searchTerm} />;
@@ -104,14 +79,6 @@ export default function Search() {
     );
   }
 
-  // return (
-  //   <div>
-  //     <p>Search Term: {searchTerm}</p>
-  //     <p>Cursor: {cursor}</p>
-  //     <pre>{JSON.stringify(data, null, 2)}</pre>
-  //   </div>
-  // );
-
   return (
     <SearchPage searchTerm={searchTerm}>
       <Section>
@@ -125,34 +92,3 @@ export default function Search() {
     </SearchPage>
   );
 }
-
-// API to paginate the results of the search query.
-// @see templates/demo-store/src/components/product/ProductGrid.client.tsx
-// export async function api(
-//   request: HydrogenRequest,
-//   { params, queryShop }: HydrogenApiRouteOptions
-// ) {
-//   if (request.method !== "POST") {
-//     return new Response("Method not allowed", {
-//       status: 405,
-//       headers: { Allow: "POST" },
-//     });
-//   }
-
-//   const url = new URL(request.url);
-//   const cursor = url.searchParams.get("cursor");
-//   const country = url.searchParams.get("country");
-//   const searchTerm = url.searchParams.get("q");
-//   const { handle } = params;
-
-//   return await queryShop({
-//     query: PAGINATE_SEARCH_QUERY,
-//     variables: {
-//       handle,
-//       cursor,
-//       pageBy: PAGINATION_SIZE,
-//       country,
-//       searchTerm,
-//     },
-//   });
-// }
