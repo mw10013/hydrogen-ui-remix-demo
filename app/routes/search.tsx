@@ -115,10 +115,11 @@ export default function Search() {
   return (
     <SearchPage searchTerm={searchTerm}>
       <Section>
+        {/* Use searchTerm as key so ProductGrid resets data on new search. */}
         <ProductGrid
-          key="search"
-          //   url={`/search?q=${searchTerm}`}
+          key={searchTerm}
           collection={{ products: data.products } as Collection}
+          href={`/search?q=${searchTerm}`}
         />
       </Section>
     </SearchPage>

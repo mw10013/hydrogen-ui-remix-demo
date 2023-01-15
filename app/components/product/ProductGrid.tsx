@@ -12,11 +12,11 @@ import { Button } from "../elements/Button";
 import type { loader } from "~/routes/products";
 
 export function ProductGrid({
-  // url,
   collection,
+  href
 }: {
-  // url: string;
   collection: Collection;
+  href: string
 }) {
   const nextButtonRef = useRef(null);
   const initialProducts = collection?.products?.nodes || [];
@@ -26,11 +26,10 @@ export function ProductGrid({
   const [nextPage, setNextPage] = useState(hasNextPage);
   const haveProducts = initialProducts.length > 0;
   const fetcher = useFetcher<typeof loader>();
-  const location = useLocation();
 
   const fetchProducts = useCallback(() => {
-    const href = `${location.pathname}?index&cursor=${cursor}`;
-    // fetcher.load(href);
+    // const href = `${location.pathname}?index&cursor=${cursor}`;
+    fetcher.load(`${href}&cursor=${cursor}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 
