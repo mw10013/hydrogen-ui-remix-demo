@@ -11,9 +11,10 @@ import { ProductGrid } from "~/components/product/ProductGrid";
 import { Text } from "~/components/elements/Text";
 import { NoResultRecommendations } from "~/components/search/NoResultRecommendations";
 import { SearchPage } from "~/components/search/SearchPage";
+import { SearchQuery } from "~/lib/gql/graphql";
 
 const query = graphql(`
-  query search($searchTerm: String, $pageBy: Int!, $cursor: String) {
+  query Search($searchTerm: String, $pageBy: Int!, $cursor: String) {
     products(
       first: $pageBy
       sortKey: RELEVANCE
@@ -56,11 +57,17 @@ const query = graphql(`
 //   }
 // `;
 
+interface Data {
+  data?: SearchQuery;
+  searchTerm: string;
+  cursor?: string | null;
+}
+
 export const loader = (async ({ request }) => {
   const searchParams = new URL(request.url).searchParams;
   const searchTerm = searchParams.get("q") ?? "";
   if (searchTerm === "") {
-    return json({ searchTerm });
+    return json<Data>({ searchTerm });
   }
 
   const cursor = searchParams.get("cursor");
@@ -74,7 +81,7 @@ export const loader = (async ({ request }) => {
       cursor,
     },
   });
-  return json({
+  return json<Data>({
     data,
     searchTerm,
     cursor,
@@ -83,6 +90,18 @@ export const loader = (async ({ request }) => {
 
 export default function Search() {
   const { data, searchTerm, cursor } = useLoaderData<typeof loader>();
+
+  if (!data || data?.products.nodes.length === 0) {
+    return (
+      <SearchPage searchTerm={searchTerm}>
+        {data?.products.nodes.length === 0 && (
+          <Section padding="x">
+            <Text className="opacity-50">No results, try something else.</Text>
+          </Section>
+        )}
+      </SearchPage>
+    )
+  }
 
   return (
     <div>
