@@ -31,6 +31,7 @@ export function ProductGrid({
     fetcher.load(
       `${href}${href.indexOf("?") === -1 ? "?" : "&"}cursor=${cursor}`
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor, href]);
 
   useEffect(() => {
