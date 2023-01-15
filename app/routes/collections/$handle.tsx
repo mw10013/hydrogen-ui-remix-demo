@@ -3,7 +3,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { shopClient } from "~/lib/utils";
-import { request } from "graphql-request";
+import { request as requestGraphql } from "graphql-request";
 import { NotFound } from "~/components/global/NotFound";
 import { PageHeader } from "~/components/global/PageHeader";
 import { Section } from "~/components/elements/Section";
@@ -13,7 +13,7 @@ import { graphql } from "~/lib/gql/gql";
 import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
 
 // const PAGE_BY = 48;
-const PAGE_BY = 8;
+const PAGE_BY = 4;
 
 const query = graphql(`
   query CollectionPage($handle: String!, $pageBy: Int!, $cursor: String) {
@@ -46,9 +46,11 @@ const query = graphql(`
   }
 `);
 
-export const loader = (async ({ params: { handle, cursor = undefined } }) => {
+export const loader = (async ({ request, params: { handle } }) => {
   invariant(handle, "Missing handle");
-  const data = await request({
+  const searchParams = new URL(request.url).searchParams;
+  const cursor = searchParams.get("cursor");
+  const data = await requestGraphql({
     url: shopClient.getStorefrontApiUrl(),
     document: query,
     requestHeaders: shopClient.getPublicTokenHeaders(),
@@ -88,7 +90,7 @@ export default function CollectionRoute() {
         <ProductGrid
           key={collection.id}
           collection={collection as Collection}
-          href={`/collections/${data.collection.handle}`}
+          href={`/collections/${collection.handle}`}
         />
       </Section>
     </>
