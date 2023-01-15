@@ -8,7 +8,7 @@ export function SearchPage({
   children,
 }: {
   searchTerm?: string | null;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <>

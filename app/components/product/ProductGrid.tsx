@@ -30,7 +30,7 @@ export function ProductGrid({
 
   const fetchProducts = useCallback(() => {
     const href = `${location.pathname}?index&cursor=${cursor}`;
-    fetcher.load(href);
+    // fetcher.load(href);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cursor]);
 

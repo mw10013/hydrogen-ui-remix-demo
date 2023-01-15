@@ -91,54 +91,38 @@ export const loader = (async ({ request }) => {
 export default function Search() {
   const { data, searchTerm, cursor } = useLoaderData<typeof loader>();
 
-  if (!data || data?.products.nodes.length === 0) {
+  if (!data) {
+    return <SearchPage searchTerm={searchTerm} />;
+  }
+  if (data.products.nodes.length === 0) {
     return (
       <SearchPage searchTerm={searchTerm}>
-        {data?.products.nodes.length === 0 && (
-          <Section padding="x">
-            <Text className="opacity-50">No results, try something else.</Text>
-          </Section>
-        )}
+        <Section padding="x">
+          <Text className="opacity-50">No results, try something else.</Text>
+        </Section>
       </SearchPage>
-    )
+    );
   }
 
+  // return (
+  //   <div>
+  //     <p>Search Term: {searchTerm}</p>
+  //     <p>Cursor: {cursor}</p>
+  //     <pre>{JSON.stringify(data, null, 2)}</pre>
+  //   </div>
+  // );
+
   return (
-    <div>
-      <p>Search Term: {searchTerm}</p>
-      <p>Cursor: {cursor}</p>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
+    <SearchPage searchTerm={searchTerm}>
+      <Section>
+        <ProductGrid
+          key="search"
+          //   url={`/search?q=${searchTerm}`}
+          collection={{ products: data.products } as Collection}
+        />
+      </Section>
+    </SearchPage>
   );
-
-  //   const noResults = products.nodes.length === 0;
-
-  //   if (noResults) {
-  //     return (
-  //       <SearchPage searchTerm={searchTerm}>
-  //         {noResults && (
-  //           <Section padding="x">
-  //             <Text className="opacity-50">No results, try something else.</Text>
-  //           </Section>
-  //         )}
-  //         <NoResultRecommendations />
-  //       </SearchPage>
-  //     );
-  //   }
-
-  //   return (
-  //     <SearchPage searchTerm={searchTerm}>
-  //       <Section>
-  //         <div>Search Term: {searchTerm}</div>
-  //         <pre>{JSON.stringify(products, null, 2)}</pre>
-  //         <ProductGrid
-  //           key="search"
-  //           //   url={`/search?q=${searchTerm}`}
-  //           collection={{ products } as Collection}
-  //         />
-  //       </Section>
-  //     </SearchPage>
-  //   );
 }
 
 // API to paginate the results of the search query.
