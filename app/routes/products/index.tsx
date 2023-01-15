@@ -4,7 +4,7 @@ import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
 import { Section } from "~/components/elements/Section";
 import { PageHeader } from "~/components/global/PageHeader";
 import { shopClient } from "~/lib/utils";
-import { request } from "graphql-request";
+import { request as requestGraphql } from "graphql-request";
 import { graphql } from "~/lib/gql/gql";
 import { PAGINATION_SIZE } from "~/lib/const";
 import { useLoaderData } from "@remix-run/react";
@@ -24,8 +24,10 @@ const query = graphql(`
   }
 `);
 
-export const loader = (async ({ params: { cursor = undefined } }) => {
-  const data = await request({
+export const loader = (async ({ request }) => {
+  const searchParams = new URL(request.url).searchParams;
+  const cursor = searchParams.get("cursor");
+  const data = await requestGraphql({
     url: shopClient.getStorefrontApiUrl(),
     document: query,
     requestHeaders: shopClient.getPublicTokenHeaders(),

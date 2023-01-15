@@ -5,7 +5,7 @@ import type {
   Collection,
   Product,
 } from "@shopify/hydrogen-react/storefront-api-types";
-import { Link, useFetcher, useLocation } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import { Grid } from "../elements/Grid";
 import { ProductCard } from "../cards/ProductCard";
 import { Button } from "../elements/Button";

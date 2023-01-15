@@ -12,12 +12,14 @@ import { Text } from "~/components/elements/Text";
 import { graphql } from "~/lib/gql/gql";
 import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
 
-const PAGE_BY = 48;
+// const PAGE_BY = 48;
+const PAGE_BY = 8;
 
 const query = graphql(`
   query CollectionPage($handle: String!, $pageBy: Int!, $cursor: String) {
     collection(handle: $handle) {
       id
+      handle
       title
       description
       seo {
@@ -86,7 +88,7 @@ export default function CollectionRoute() {
         <ProductGrid
           key={collection.id}
           collection={collection as Collection}
-          //   url={`/collections/${handle}`}
+          href={`/collections/${data.collection.handle}`}
         />
       </Section>
     </>
