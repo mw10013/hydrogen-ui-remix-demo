@@ -1,47 +1,26 @@
-import { PAGINATION_SIZE } from "~/lib/const";
+import type {
+  Collection,
+  Product,
+} from "@shopify/hydrogen-react/storefront-api-types";
+import type { FeaturedQuery } from "~/lib/gql/graphql";
 import { FeaturedCollections } from "../sections/FeaturedCollections";
 import { ProductSwimlane } from "../sections/ProductSwimlane";
 
-export function NoResultRecommendations() {
+export function NoResultRecommendations({
+  featured,
+}: {
+  featured: FeaturedQuery;
+}) {
   return (
     <>
-      <div>No Result Recommendations</div>
-      {/* <FeaturedCollections
+      <FeaturedCollections
         title="Trending Collections"
-        data={data.featuredCollections.nodes}
+        data={featured.featuredCollections.nodes as Collection[]}
       />
       <ProductSwimlane
         title="Trending Products"
-        data={data.featuredProducts.nodes}
-      /> */}
+        products={featured.featuredProducts.nodes as Product[]}
+      />
     </>
   );
 }
-
-// const SEARCH_NO_RESULTS_QUERY = gql`
-//   ${PRODUCT_CARD_FRAGMENT}
-//   query searchNoResult(
-//     $country: CountryCode
-//     $language: LanguageCode
-//     $pageBy: Int!
-//   ) @inContext(country: $country, language: $language) {
-//     featuredCollections: collections(first: 3, sortKey: UPDATED_AT) {
-//       nodes {
-//         id
-//         title
-//         handle
-//         image {
-//           altText
-//           width
-//           height
-//           url
-//         }
-//       }
-//     }
-//     featuredProducts: products(first: $pageBy) {
-//       nodes {
-//         ...ProductCardFragment
-//       }
-//     }
-//   }
-// `;
