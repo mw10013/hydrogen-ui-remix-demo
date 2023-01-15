@@ -59,35 +59,36 @@ const query = graphql(`
 export const loader = (async ({ request }) => {
   const searchParams = new URL(request.url).searchParams;
   const searchTerm = searchParams.get("q") ?? "";
-  const cursor = searchParams.get("cursor");
+  if (searchTerm === "") {
+    return json({ searchTerm });
+  }
 
-  const data =
-    searchTerm !== ""
-      ? await graphqlRequest({
-          url: shopClient.getStorefrontApiUrl(),
-          document: query,
-          requestHeaders: shopClient.getPublicTokenHeaders(),
-          variables: {
-            searchTerm,
-            pageBy: PAGINATION_SIZE,
-            cursor,
-          },
-        })
-      : {};
+  const cursor = searchParams.get("cursor");
+  const data = await graphqlRequest({
+    url: shopClient.getStorefrontApiUrl(),
+    document: query,
+    requestHeaders: shopClient.getPublicTokenHeaders(),
+    variables: {
+      searchTerm,
+      pageBy: PAGINATION_SIZE,
+      cursor,
+    },
+  });
   return json({
-    data: { ...data, searchTerm, cursor },
+    data,
+    searchTerm,
+    cursor,
   });
 }) satisfies LoaderFunction;
 
 export default function Search() {
-  const {
-    data: { products, searchTerm },
-  } = useLoaderData<typeof loader>();
+  const { data, searchTerm, cursor } = useLoaderData<typeof loader>();
 
   return (
     <div>
       <p>Search Term: {searchTerm}</p>
-      <pre>{JSON.stringify(products, null, 2)}</pre>
+      <p>Cursor: {cursor}</p>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 
