@@ -1,3 +1,4 @@
+import { Form } from "@remix-run/react";
 import { Heading } from "../elements/Heading";
 import { Input } from "../elements/Input";
 import { PageHeader } from "../global/PageHeader";
@@ -15,7 +16,7 @@ export function SearchPage({
         <Heading as="h1" size="copy">
           Search
         </Heading>
-        <form className="relative flex w-full text-heading">
+        <Form className="relative flex w-full text-heading">
           <Input
             defaultValue={searchTerm}
             placeholder="Search…"
@@ -26,7 +27,7 @@ export function SearchPage({
           <button className="absolute right-0 py-2" type="submit">
             Go
           </button>
-        </form>
+        </Form>
       </PageHeader>
       {children}
     </>

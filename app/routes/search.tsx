@@ -1,7 +1,7 @@
 import { PAGINATION_SIZE } from "~/lib/const";
 import type { Collection } from "@shopify/hydrogen-react/storefront-api-types";
 import { graphql } from "~/lib/gql/gql";
-import request from "graphql-request";
+import { request as graphqlRequest } from "graphql-request";
 import { shopClient } from "~/lib/utils";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -56,21 +56,26 @@ const query = graphql(`
 //   }
 // `;
 
-export const loader = (async ({
-  params: { q: searchTerm = undefined, cursor = undefined },
-}) => {
-  const data = await request({
-    url: shopClient.getStorefrontApiUrl(),
-    document: query,
-    requestHeaders: shopClient.getPublicTokenHeaders(),
-    variables: {
-      searchTerm,
-      pageBy: PAGINATION_SIZE,
-      cursor,
-    },
-  });
+export const loader = (async ({ request }) => {
+  const searchParams = new URL(request.url).searchParams;
+  const searchTerm = searchParams.get("q") ?? "";
+  const cursor = searchParams.get("cursor");
+
+  const data =
+    searchTerm !== ""
+      ? await graphqlRequest({
+          url: shopClient.getStorefrontApiUrl(),
+          document: query,
+          requestHeaders: shopClient.getPublicTokenHeaders(),
+          variables: {
+            searchTerm,
+            pageBy: PAGINATION_SIZE,
+            cursor,
+          },
+        })
+      : {};
   return json({
-    data: { ...data, searchTerm },
+    data: { ...data, searchTerm, cursor },
   });
 }) satisfies LoaderFunction;
 
@@ -78,32 +83,42 @@ export default function Search() {
   const {
     data: { products, searchTerm },
   } = useLoaderData<typeof loader>();
-  const noResults = products.nodes.length === 0;
-
-  if (noResults) {
-    return (
-      <SearchPage searchTerm={searchTerm}>
-        {noResults && (
-          <Section padding="x">
-            <Text className="opacity-50">No results, try something else.</Text>
-          </Section>
-        )}
-        <NoResultRecommendations />
-      </SearchPage>
-    );
-  }
 
   return (
-    <SearchPage searchTerm={searchTerm}>
-      <Section>
-        <ProductGrid
-          key="search"
-          //   url={`/search?q=${searchTerm}`}
-          collection={{ products } as Collection}
-        />
-      </Section>
-    </SearchPage>
+    <div>
+      <p>Search Term: {searchTerm}</p>
+      <pre>{JSON.stringify(products, null, 2)}</pre>
+    </div>
   );
+
+  //   const noResults = products.nodes.length === 0;
+
+  //   if (noResults) {
+  //     return (
+  //       <SearchPage searchTerm={searchTerm}>
+  //         {noResults && (
+  //           <Section padding="x">
+  //             <Text className="opacity-50">No results, try something else.</Text>
+  //           </Section>
+  //         )}
+  //         <NoResultRecommendations />
+  //       </SearchPage>
+  //     );
+  //   }
+
+  //   return (
+  //     <SearchPage searchTerm={searchTerm}>
+  //       <Section>
+  //         <div>Search Term: {searchTerm}</div>
+  //         <pre>{JSON.stringify(products, null, 2)}</pre>
+  //         <ProductGrid
+  //           key="search"
+  //           //   url={`/search?q=${searchTerm}`}
+  //           collection={{ products } as Collection}
+  //         />
+  //       </Section>
+  //     </SearchPage>
+  //   );
 }
 
 // API to paginate the results of the search query.

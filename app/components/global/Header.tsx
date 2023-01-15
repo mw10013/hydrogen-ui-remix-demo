@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, Form } from "@remix-run/react";
 import clsx from "clsx";
 import { useWindowScroll } from "react-use";
 import { Heading } from "../elements/Heading";
@@ -58,7 +58,7 @@ function MobileHeader({
         <button onClick={openMenu} className={styles.button}>
           <IconMenu />
         </button>
-        <form
+        <Form
           // action={`/${countryCode ? countryCode + '/' : ''}search`}
           action="/search"
           className="items-center gap-2 sm:flex"
@@ -77,7 +77,7 @@ function MobileHeader({
             placeholder="Search"
             name="q"
           />
-        </form>
+        </Form>
       </div>
 
       <Link
@@ -144,7 +144,7 @@ function DesktopHeader({
         </nav>
       </div>
       <div className="flex items-center gap-1">
-        <form
+        <Form
           // action={`/${countryCode ? countryCode + '/' : ''}search`}
           action="/search"
           className="flex items-center gap-2"
@@ -163,7 +163,7 @@ function DesktopHeader({
           <button type="submit" className={styles.button}>
             <IconSearch />
           </button>
-        </form>
+        </Form>
         <Link to={"/account"} className={styles.button}>
           <IconAccount />
         </Link>
