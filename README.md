@@ -1,3 +1,6 @@
+# Hydrogen UI Remix Demo
+
+The hydrogen 1.0 demo mostly ported over to hydrogen-ui 2022.10.8 and remix.
 
 ## Dev Setup
 
@@ -13,7 +16,6 @@
 - pnpm dlx create-playwright
 - ignoring playwright configuration error: HTML reporter output folder clashes with the tests output folder
 - hack: ci uses .env.example?
-
 
 ## Vitest
 
