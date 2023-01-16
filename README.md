@@ -1,6 +1,6 @@
 # Hydrogen UI Remix Demo
 
-The hydrogen 1.0 demo mostly ported over to hydrogen-ui 2022.10.8 and remix.
+The hydrogen 1.0 demo mostly ported over to hydrogen-ui 2022.10.8 and remix. [Demo](https://hydrogen-ui-remix-demo.vercel.app/)
 
 ## Dev Setup
 
